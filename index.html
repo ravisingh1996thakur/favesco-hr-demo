@@ -3,773 +3,1166 @@
 <head>
 <meta charset="utf-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1" />
-<title>FAVESCO · Agentes de IA para Recursos Humanos — Demo</title>
+<meta name="theme-color" content="#0D1B2A" />
+<title>FAVESCO · People Intelligence Platform</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,400;9..144,500;9..144,600;9..144,700&family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.4/dist/chart.umd.min.js"></script>
 <style>
   :root {
-    --favesco-deep: #0B3D6B;
-    --favesco-blue: #1E5A99;
-    --favesco-mid: #3E7CB1;
-    --favesco-soft: #B7D4EC;
-    --favesco-mist: #EAF3FB;
-    --amber: #B7791F;
-    --coral: #C0392B;
-    --emerald: #1E8E4A;
-    --violet: #6B46C1;
-    --saffron: #D4A04C;
-    --ink: #0F1B2D;
-    --graphite: #2D3748;
-    --slate: #4A5568;
-    --silver: #A0AEC0;
-    --pearl: #E2E8F0;
-    --bone: #F7FAFC;
-    --paper: #FFFFFF;
-    --cream: #FDFCF8;
-    --warm-bg: #FAF8F3;
-    --font-display: 'Fraunces', Georgia, serif;
-    --font-body: 'Plus Jakarta Sans', system-ui, -apple-system, sans-serif;
-    --font-mono: 'JetBrains Mono', 'SF Mono', Menlo, monospace;
-    --shadow-subtle: 0 1px 2px rgba(15,27,45,.04);
-    --shadow-soft: 0 4px 12px rgba(15,27,45,.06);
-    --shadow-lift: 0 12px 32px rgba(15,27,45,.10);
-    --radius: 14px;
+    --bg: #F6F7F9;
+    --bg-elevated: #FFFFFF;
+    --sidebar: #0B1A2D;
+    --sidebar-hover: #142841;
+    --sidebar-active: #1E3A5F;
+    --border: #E5E7EB;
+    --border-strong: #D1D5DB;
+    --ink: #0F172A;
+    --ink-soft: #334155;
+    --muted: #64748B;
+    --muted-soft: #94A3B8;
+    --accent: #1E5A99;
+    --accent-deep: #0B3D6B;
+    --accent-soft: #DBEAFE;
+    --success: #15803D;
+    --success-soft: #DCFCE7;
+    --warn: #B45309;
+    --warn-soft: #FEF3C7;
+    --danger: #B91C1C;
+    --danger-soft: #FEE2E2;
+    --violet: #6D28D9;
+    --violet-soft: #EDE9FE;
+    --shadow-sm: 0 1px 2px rgba(15,23,42,.04);
+    --shadow: 0 1px 3px rgba(15,23,42,.06), 0 1px 2px rgba(15,23,42,.04);
+    --shadow-lg: 0 10px 24px rgba(15,23,42,.10), 0 4px 8px rgba(15,23,42,.06);
+    --radius: 10px;
+    --radius-sm: 6px;
+    --font: 'Inter', system-ui, -apple-system, sans-serif;
+    --mono: 'JetBrains Mono', ui-monospace, monospace;
   }
   * { box-sizing: border-box; }
-  html, body { margin: 0; padding: 0; }
+  html, body { margin: 0; padding: 0; height: 100%; }
   body {
-    font-family: var(--font-body);
-    color: var(--ink);
-    background: var(--warm-bg);
-    line-height: 1.55;
-    -webkit-font-smoothing: antialiased;
+    font-family: var(--font); color: var(--ink); background: var(--bg);
+    font-size: 13.5px; line-height: 1.5; -webkit-font-smoothing: antialiased; overflow: hidden;
   }
-  .wrap { max-width: 1440px; margin: 0 auto; padding: 32px clamp(20px, 4vw, 56px); }
+  button { font-family: inherit; cursor: pointer; }
+  ::-webkit-scrollbar { width: 10px; height: 10px; }
+  ::-webkit-scrollbar-track { background: transparent; }
+  ::-webkit-scrollbar-thumb { background: #CBD5E1; border-radius: 10px; border: 2px solid var(--bg); }
+  ::-webkit-scrollbar-thumb:hover { background: #94A3B8; }
 
-  /* Top bar */
-  .topbar {
-    display: flex; align-items: center; justify-content: space-between;
-    padding: 18px clamp(20px, 4vw, 56px);
-    background: var(--favesco-deep);
-    color: white;
-    border-bottom: 1px solid rgba(255,255,255,.08);
+  .app { display: grid; grid-template-columns: 248px 1fr; height: 100vh; }
+  .sidebar { background: var(--sidebar); color: #CBD5E1; display: flex; flex-direction: column; border-right: 1px solid rgba(255,255,255,.04); }
+  .brand { padding: 18px 18px 20px; border-bottom: 1px solid rgba(255,255,255,.06); display: flex; align-items: center; gap: 11px; }
+  .brand-mark { width: 32px; height: 32px; border-radius: 8px; background: linear-gradient(135deg, #4A90D9, #B7D4EC); display: grid; place-items: center; color: var(--accent-deep); font-weight: 800; font-size: 14px; letter-spacing: -.5px; }
+  .brand-text { line-height: 1.1; }
+  .brand-text .name { color: #fff; font-weight: 700; font-size: 15px; letter-spacing: -.2px; }
+  .brand-text .sub { color: #94A3B8; font-size: 10.5px; letter-spacing: .5px; text-transform: uppercase; margin-top: 2px; }
+  .nav-section { padding: 14px 10px 6px; }
+  .nav-label { color: #64748B; font-size: 10.5px; font-weight: 600; letter-spacing: .8px; text-transform: uppercase; padding: 0 10px 8px; }
+  .nav-item { display: flex; align-items: center; gap: 11px; padding: 8px 10px; border-radius: 7px; cursor: pointer; font-size: 13px; color: #CBD5E1; font-weight: 500; margin-bottom: 1px; transition: background .12s, color .12s; }
+  .nav-item:hover { background: var(--sidebar-hover); color: #fff; }
+  .nav-item.active { background: var(--sidebar-active); color: #fff; }
+  .nav-item svg { width: 16px; height: 16px; flex-shrink: 0; }
+  .nav-item .badge { margin-left: auto; background: rgba(255,255,255,.10); color: #fff; font-size: 10.5px; padding: 2px 7px; border-radius: 999px; font-weight: 600; }
+  .nav-item.active .badge { background: var(--accent-soft); color: var(--accent-deep); }
+  .nav-item .badge.danger { background: var(--danger); color: #fff; }
+  .sidebar-foot { margin-top: auto; padding: 14px; border-top: 1px solid rgba(255,255,255,.06); display: flex; align-items: center; gap: 10px; }
+  .user-avatar { width: 32px; height: 32px; border-radius: 50%; background: #4A90D9; color: #fff; display: grid; place-items: center; font-weight: 700; font-size: 12px; flex-shrink: 0; }
+  .user-info { line-height: 1.2; flex: 1; min-width: 0; }
+  .user-info .name { color: #fff; font-weight: 600; font-size: 12.5px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+  .user-info .role { color: #94A3B8; font-size: 11px; }
+  .user-cog { color: #94A3B8; cursor: pointer; }
+  .user-cog:hover { color: #fff; }
+
+  .main { display: flex; flex-direction: column; height: 100vh; overflow: hidden; }
+  .topbar { height: 56px; background: var(--bg-elevated); border-bottom: 1px solid var(--border); display: flex; align-items: center; gap: 16px; padding: 0 24px; flex-shrink: 0; }
+  .crumbs { display: flex; align-items: center; gap: 8px; font-size: 13px; color: var(--muted); font-weight: 500; }
+  .crumbs strong { color: var(--ink); font-weight: 600; }
+  .crumbs svg { width: 14px; height: 14px; color: var(--muted-soft); }
+  .search { margin-left: 16px; flex: 1; max-width: 420px; position: relative; }
+  .search input { width: 100%; padding: 8px 12px 8px 36px; border: 1px solid var(--border); border-radius: 8px; background: var(--bg); font-size: 13px; font-family: inherit; color: var(--ink); transition: border-color .12s, background .12s; }
+  .search input:focus { outline: 0; border-color: var(--accent); background: #fff; }
+  .search .icon { position: absolute; left: 12px; top: 50%; transform: translateY(-50%); color: var(--muted); width: 15px; height: 15px; }
+  .search .kbd { position: absolute; right: 8px; top: 50%; transform: translateY(-50%); font-family: var(--mono); font-size: 10.5px; background: var(--bg); border: 1px solid var(--border); border-radius: 4px; padding: 1px 6px; color: var(--muted); }
+  .topbar-actions { margin-left: auto; display: flex; align-items: center; gap: 6px; }
+  .icon-btn { width: 34px; height: 34px; border-radius: 7px; border: 0; background: transparent; display: grid; place-items: center; color: var(--muted); position: relative; transition: background .12s, color .12s; }
+  .icon-btn:hover { background: var(--bg); color: var(--ink); }
+  .icon-btn svg { width: 17px; height: 17px; }
+  .icon-btn .dot { position: absolute; top: 8px; right: 9px; width: 7px; height: 7px; border-radius: 50%; background: var(--danger); border: 2px solid var(--bg-elevated); }
+  .topbar .divider { width: 1px; height: 24px; background: var(--border); margin: 0 4px; }
+  .btn-primary { background: var(--ink); color: #fff; padding: 8px 14px; border-radius: 7px; border: 0; font-weight: 600; font-size: 12.5px; display: inline-flex; align-items: center; gap: 7px; transition: background .12s; }
+  .btn-primary:hover { background: #1e293b; }
+  .btn-primary svg { width: 14px; height: 14px; }
+
+  .content { flex: 1; overflow-y: auto; padding: 24px; }
+  .page-head { display: flex; justify-content: space-between; align-items: flex-end; margin-bottom: 20px; gap: 24px; flex-wrap: wrap; }
+  .page-head h1 { font-size: 22px; font-weight: 700; margin: 0; letter-spacing: -.4px; color: var(--ink); }
+  .page-head .subtitle { color: var(--muted); font-size: 13.5px; margin-top: 4px; }
+  .page-head .live-stamp { display: inline-flex; align-items: center; gap: 6px; font-size: 11.5px; color: var(--muted); margin-top: 6px; font-variant-numeric: tabular-nums; }
+  .pulse { width: 7px; height: 7px; border-radius: 50%; background: var(--success); box-shadow: 0 0 0 0 rgba(21,128,61,.6); animation: pulse 1.8s infinite; }
+  @keyframes pulse {
+    0% { box-shadow: 0 0 0 0 rgba(21,128,61,.5); }
+    70% { box-shadow: 0 0 0 8px rgba(21,128,61,0); }
+    100% { box-shadow: 0 0 0 0 rgba(21,128,61,0); }
   }
-  .brand { display: flex; align-items: center; gap: 14px; }
-  .brand-mark {
-    width: 38px; height: 38px; border-radius: 8px;
-    background: linear-gradient(135deg, var(--favesco-mid), var(--favesco-soft));
-    display: grid; place-items: center;
-    font-family: var(--font-display); font-weight: 700; color: var(--favesco-deep); font-size: 20px;
-  }
-  .brand-text { display: flex; flex-direction: column; line-height: 1.15; }
-  .brand-text .name { font-family: var(--font-display); font-weight: 700; font-size: 18px; letter-spacing: .2px; }
-  .brand-text .sub { font-size: 11px; opacity: .75; letter-spacing: .8px; text-transform: uppercase; }
-  .topbar-right { display: flex; align-items: center; gap: 20px; font-size: 13px; }
-  .topbar-right .who { display: flex; flex-direction: column; align-items: flex-end; line-height: 1.2; }
-  .topbar-right .who .name { font-weight: 600; }
-  .topbar-right .who .role { font-size: 11px; opacity: .7; }
-  .avatar {
-    width: 36px; height: 36px; border-radius: 50%;
-    background: var(--favesco-soft); color: var(--favesco-deep);
-    display: grid; place-items: center; font-weight: 700; font-size: 13px;
+  .filter-bar { display: flex; align-items: center; gap: 10px; flex-wrap: wrap; }
+  .filter-btn { background: var(--bg-elevated); border: 1px solid var(--border); color: var(--ink-soft); padding: 7px 12px; border-radius: 7px; font-size: 12.5px; font-weight: 500; display: inline-flex; align-items: center; gap: 6px; cursor: pointer; transition: border-color .12s, background .12s; }
+  .filter-btn:hover { border-color: var(--border-strong); }
+  .filter-btn.active { background: var(--accent-soft); color: var(--accent-deep); border-color: var(--accent-soft); }
+  .filter-btn svg { width: 13px; height: 13px; color: var(--muted); }
+
+  .card { background: var(--bg-elevated); border: 1px solid var(--border); border-radius: var(--radius); box-shadow: var(--shadow-sm); }
+  .card-head { padding: 14px 18px; border-bottom: 1px solid var(--border); display: flex; justify-content: space-between; align-items: center; gap: 12px; }
+  .card-head h3 { margin: 0; font-size: 13.5px; font-weight: 600; letter-spacing: -.1px; }
+  .card-head .meta { font-size: 11.5px; color: var(--muted); font-variant-numeric: tabular-nums; }
+  .card-head .tabs { display: flex; gap: 4px; }
+  .card-head .tab { background: transparent; border: 0; padding: 4px 10px; border-radius: 5px; font-size: 11.5px; font-weight: 500; color: var(--muted); cursor: pointer; }
+  .card-head .tab.active { background: var(--bg); color: var(--ink); }
+  .card-body { padding: 18px; }
+
+  .kpi-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 14px; margin-bottom: 18px; }
+  @media (max-width: 1280px) { .kpi-grid { grid-template-columns: repeat(2, 1fr); } }
+  .kpi { background: var(--bg-elevated); border: 1px solid var(--border); border-radius: var(--radius); padding: 16px 18px; box-shadow: var(--shadow-sm); position: relative; min-height: 116px; display: flex; flex-direction: column; justify-content: space-between; }
+  .kpi-top { display: flex; justify-content: space-between; align-items: flex-start; }
+  .kpi .label { font-size: 11.5px; color: var(--muted); font-weight: 600; letter-spacing: .2px; text-transform: uppercase; }
+  .kpi .icon-wrap { width: 28px; height: 28px; border-radius: 7px; display: grid; place-items: center; background: var(--accent-soft); color: var(--accent-deep); }
+  .kpi.warn .icon-wrap { background: var(--warn-soft); color: var(--warn); }
+  .kpi.danger .icon-wrap { background: var(--danger-soft); color: var(--danger); }
+  .kpi.success .icon-wrap { background: var(--success-soft); color: var(--success); }
+  .kpi.violet .icon-wrap { background: var(--violet-soft); color: var(--violet); }
+  .kpi-mid { display: flex; align-items: baseline; gap: 8px; margin-top: 8px; }
+  .kpi .value { font-size: 26px; font-weight: 700; letter-spacing: -.8px; color: var(--ink); font-variant-numeric: tabular-nums; line-height: 1; }
+  .kpi .unit { font-size: 13px; color: var(--muted); font-weight: 500; }
+  .delta { font-size: 11.5px; font-weight: 600; display: inline-flex; align-items: center; gap: 3px; }
+  .delta.up { color: var(--success); }
+  .delta.down { color: var(--danger); }
+  .delta.flat { color: var(--muted); }
+  .kpi .spark { height: 28px; margin-top: 6px; }
+  .kpi-foot { font-size: 11px; color: var(--muted); display: flex; justify-content: space-between; align-items: center; }
+
+  .grid { display: grid; gap: 14px; }
+  .grid-12 { grid-template-columns: repeat(12, 1fr); }
+  .col-8 { grid-column: span 8; }
+  .col-7 { grid-column: span 7; }
+  .col-6 { grid-column: span 6; }
+  .col-5 { grid-column: span 5; }
+  .col-4 { grid-column: span 4; }
+  .col-3 { grid-column: span 3; }
+  @media (max-width: 1100px) {
+    .col-8, .col-7, .col-6, .col-5, .col-4, .col-3 { grid-column: span 12; }
   }
 
-  /* Hero / briefing */
-  .hero { display: grid; grid-template-columns: 1.4fr 1fr; gap: 28px; margin-top: 8px; }
-  @media (max-width: 980px) { .hero { grid-template-columns: 1fr; } }
-  .hero-left h1 {
-    font-family: var(--font-display); font-weight: 600;
-    font-size: clamp(28px, 3.4vw, 44px); line-height: 1.1;
-    margin: 4px 0 8px; letter-spacing: -.5px;
-  }
-  .hero-left .eyebrow {
-    font-size: 11px; letter-spacing: 1.4px; text-transform: uppercase;
-    color: var(--favesco-blue); font-weight: 700;
-  }
-  .hero-left .lede { color: var(--slate); font-size: 16px; max-width: 60ch; }
-  .hero-right {
-    background: var(--paper); border-radius: var(--radius); padding: 22px;
-    box-shadow: var(--shadow-soft); border: 1px solid var(--pearl);
-  }
-  .briefing-title { display: flex; align-items: center; gap: 10px; margin-bottom: 14px; }
-  .briefing-title h3 { margin: 0; font-family: var(--font-display); font-weight: 600; font-size: 17px; }
-  .pill {
-    font-size: 10px; letter-spacing: .8px; text-transform: uppercase; font-weight: 700;
-    padding: 3px 8px; border-radius: 999px;
-  }
-  .pill-live { background: #E8F5EE; color: var(--emerald); }
-  .pill-warn { background: #FDF2E1; color: var(--amber); }
-  .pill-crit { background: #FBE7E5; color: var(--coral); }
-  .briefing-item {
-    display: flex; gap: 12px; padding: 12px 0;
-    border-top: 1px solid var(--pearl);
-  }
-  .briefing-item:first-of-type { border-top: 0; padding-top: 0; }
-  .bi-bullet {
-    width: 26px; height: 26px; border-radius: 50%; flex-shrink: 0;
-    display: grid; place-items: center; font-weight: 700; font-size: 12px;
-    background: var(--favesco-mist); color: var(--favesco-deep);
-  }
-  .bi-body { flex: 1; }
-  .bi-body .bi-head { font-weight: 600; font-size: 14px; }
-  .bi-body .bi-meta { color: var(--slate); font-size: 12.5px; margin-top: 2px; }
-  .bi-tag { font-size: 10px; letter-spacing: .6px; text-transform: uppercase; color: var(--slate); }
+  .briefing-list { display: flex; flex-direction: column; }
+  .briefing-row { display: grid; grid-template-columns: 36px 1fr auto; gap: 14px; padding: 14px 18px; border-bottom: 1px solid var(--border); align-items: flex-start; cursor: pointer; transition: background .12s; }
+  .briefing-row:last-child { border-bottom: 0; }
+  .briefing-row:hover { background: #FAFBFC; }
+  .severity-mark { width: 32px; height: 32px; border-radius: 8px; display: grid; place-items: center; font-weight: 700; font-size: 11px; letter-spacing: .2px; }
+  .severity-mark.p1 { background: var(--danger-soft); color: var(--danger); }
+  .severity-mark.p2 { background: var(--warn-soft); color: var(--warn); }
+  .severity-mark.p3 { background: var(--bg); color: var(--muted); border: 1px solid var(--border); }
+  .b-title { font-weight: 600; font-size: 13.5px; color: var(--ink); margin-bottom: 3px; }
+  .b-desc { font-size: 12.5px; color: var(--ink-soft); line-height: 1.5; }
+  .b-meta { margin-top: 8px; display: flex; gap: 10px; flex-wrap: wrap; align-items: center; font-size: 11px; color: var(--muted); }
+  .b-meta .agent-tag { background: var(--bg); border: 1px solid var(--border); padding: 2px 7px; border-radius: 4px; font-weight: 500; color: var(--ink-soft); }
+  .b-actions { display: flex; flex-direction: column; align-items: flex-end; gap: 6px; font-size: 11px; color: var(--muted); }
+  .b-actions .sla { background: var(--bg); border: 1px solid var(--border); padding: 3px 8px; border-radius: 5px; font-variant-numeric: tabular-nums; font-weight: 600; }
+  .b-actions .sla.urgent { background: var(--danger-soft); color: var(--danger); border-color: transparent; }
+  .b-actions .sla.warning { background: var(--warn-soft); color: var(--warn); border-color: transparent; }
 
-  /* Section heading */
-  .section { margin-top: 44px; }
-  .section h2 {
-    font-family: var(--font-display); font-weight: 600;
-    font-size: 24px; margin: 0 0 6px;
-  }
-  .section .lead { color: var(--slate); font-size: 14px; margin: 0 0 18px; }
+  table { width: 100%; border-collapse: collapse; font-size: 13px; }
+  thead th { text-align: left; font-weight: 600; color: var(--muted); font-size: 11px; letter-spacing: .4px; text-transform: uppercase; padding: 10px 18px; background: #FAFBFC; border-bottom: 1px solid var(--border); }
+  thead th.num { text-align: right; }
+  tbody td { padding: 12px 18px; border-bottom: 1px solid var(--border); color: var(--ink-soft); vertical-align: middle; }
+  tbody td.num { text-align: right; font-variant-numeric: tabular-nums; }
+  tbody td strong { color: var(--ink); font-weight: 600; }
+  tbody tr:last-child td { border-bottom: 0; }
+  tbody tr:hover { background: #FAFBFC; }
+  .name-cell { display: flex; align-items: center; gap: 10px; }
+  .name-avatar { width: 28px; height: 28px; border-radius: 50%; display: grid; place-items: center; font-weight: 600; font-size: 11px; color: #fff; flex-shrink: 0; }
+  .pill { display: inline-flex; align-items: center; gap: 4px; font-size: 11px; font-weight: 600; padding: 3px 8px; border-radius: 999px; letter-spacing: .1px; }
+  .pill-success { background: var(--success-soft); color: var(--success); }
+  .pill-warn { background: var(--warn-soft); color: var(--warn); }
+  .pill-danger { background: var(--danger-soft); color: var(--danger); }
+  .pill-info { background: var(--accent-soft); color: var(--accent-deep); }
+  .pill-violet { background: var(--violet-soft); color: var(--violet); }
+  .pill-neutral { background: var(--bg); color: var(--muted); border: 1px solid var(--border); }
+  .pill::before { content: ''; width: 5px; height: 5px; border-radius: 50%; background: currentColor; }
+  .pill.no-dot::before { display: none; }
+  .risk-bar { display: flex; align-items: center; gap: 8px; }
+  .risk-bar .track { width: 70px; height: 5px; background: var(--bg); border-radius: 99px; overflow: hidden; }
+  .risk-bar .fill { height: 100%; border-radius: 99px; }
 
-  /* KPI grid */
-  .kpis { display: grid; grid-template-columns: repeat(4, 1fr); gap: 16px; }
-  @media (max-width: 980px) { .kpis { grid-template-columns: repeat(2, 1fr); } }
-  @media (max-width: 540px) { .kpis { grid-template-columns: 1fr; } }
-  .kpi {
-    background: var(--paper); border: 1px solid var(--pearl);
-    border-radius: var(--radius); padding: 18px;
-    box-shadow: var(--shadow-subtle);
-    position: relative; overflow: hidden;
-  }
-  .kpi::before {
-    content: ""; position: absolute; left: 0; top: 0; bottom: 0; width: 3px;
-    background: var(--favesco-blue);
-  }
-  .kpi.amber::before { background: var(--amber); }
-  .kpi.coral::before { background: var(--coral); }
-  .kpi.emerald::before { background: var(--emerald); }
-  .kpi .label { font-size: 11.5px; color: var(--slate); letter-spacing: .4px; text-transform: uppercase; font-weight: 600; }
-  .kpi .value {
-    font-family: var(--font-display); font-weight: 600;
-    font-size: 30px; margin: 6px 0 2px; letter-spacing: -.5px;
-  }
-  .kpi .delta { font-size: 12.5px; color: var(--slate); display: flex; align-items: center; gap: 6px; }
-  .delta-up { color: var(--emerald); font-weight: 600; }
-  .delta-down { color: var(--coral); font-weight: 600; }
-  .delta-flat { color: var(--slate); font-weight: 600; }
+  .agent-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 14px; }
+  @media (max-width: 1280px) { .agent-grid { grid-template-columns: repeat(2, 1fr); } }
+  @media (max-width: 700px) { .agent-grid { grid-template-columns: 1fr; } }
+  .agent-tile { background: var(--bg-elevated); border: 1px solid var(--border); border-radius: var(--radius); padding: 18px; box-shadow: var(--shadow-sm); cursor: pointer; transition: border-color .12s, transform .12s, box-shadow .12s; display: flex; flex-direction: column; min-height: 220px; }
+  .agent-tile:hover { border-color: var(--ink); box-shadow: var(--shadow); transform: translateY(-1px); }
+  .at-top { display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 12px; }
+  .at-num { font-family: var(--mono); font-size: 11.5px; font-weight: 600; background: var(--bg); padding: 3px 7px; border-radius: 5px; color: var(--ink-soft); border: 1px solid var(--border); }
+  .at-name { font-size: 14.5px; font-weight: 700; margin: 0 0 4px; letter-spacing: -.1px; }
+  .at-role { font-size: 12px; color: var(--muted); font-weight: 500; margin-bottom: 10px; }
+  .at-desc { font-size: 12.5px; color: var(--ink-soft); line-height: 1.55; flex: 1; }
+  .at-stats { margin-top: 14px; padding-top: 12px; border-top: 1px dashed var(--border); display: flex; gap: 18px; font-size: 11.5px; color: var(--muted); }
+  .at-stats .stat { display: flex; flex-direction: column; gap: 2px; }
+  .at-stats .stat .v { color: var(--ink); font-weight: 700; font-size: 13px; font-variant-numeric: tabular-nums; }
+  .at-foot { margin-top: 12px; display: flex; justify-content: space-between; align-items: center; }
 
-  /* Chart placeholders */
-  .charts { display: grid; grid-template-columns: 1.4fr 1fr; gap: 16px; margin-top: 16px; }
-  @media (max-width: 980px) { .charts { grid-template-columns: 1fr; } }
-  .card {
-    background: var(--paper); border: 1px solid var(--pearl);
-    border-radius: var(--radius); padding: 20px;
-    box-shadow: var(--shadow-subtle);
-  }
-  .card h3 {
-    font-family: var(--font-display); font-weight: 600;
-    font-size: 16px; margin: 0 0 12px;
-  }
-  .bar-row { display: grid; grid-template-columns: 130px 1fr 56px; gap: 12px; align-items: center; padding: 6px 0; }
-  .bar-row .lbl { font-size: 13px; color: var(--graphite); }
-  .bar-track { height: 8px; background: var(--favesco-mist); border-radius: 999px; overflow: hidden; }
-  .bar-fill { height: 100%; background: var(--favesco-blue); border-radius: 999px; }
-  .bar-row .num { font-family: var(--font-mono); font-size: 12.5px; color: var(--slate); text-align: right; }
+  .feed { display: flex; flex-direction: column; }
+  .feed-item { display: grid; grid-template-columns: 30px 1fr; gap: 12px; padding: 12px 18px; border-bottom: 1px solid var(--border); }
+  .feed-item:last-child { border-bottom: 0; }
+  .feed-dot { width: 26px; height: 26px; border-radius: 50%; background: var(--bg); border: 1px solid var(--border); display: grid; place-items: center; font-size: 11px; font-weight: 700; color: var(--muted); }
+  .feed-dot.success { background: var(--success-soft); border-color: transparent; color: var(--success); }
+  .feed-dot.warn { background: var(--warn-soft); border-color: transparent; color: var(--warn); }
+  .feed-dot.info { background: var(--accent-soft); border-color: transparent; color: var(--accent-deep); }
+  .feed-body { font-size: 12.5px; color: var(--ink-soft); line-height: 1.5; }
+  .feed-body .who { color: var(--ink); font-weight: 600; }
+  .feed-body .when { color: var(--muted); font-size: 11px; margin-top: 2px; }
 
-  .donut {
-    display: flex; gap: 18px; align-items: center;
-  }
-  .donut svg { flex-shrink: 0; }
-  .legend { font-size: 13px; display: flex; flex-direction: column; gap: 8px; }
-  .legend .row { display: flex; align-items: center; gap: 8px; }
-  .legend .dot { width: 10px; height: 10px; border-radius: 50%; }
+  .ring-wrap { display: grid; grid-template-columns: 140px 1fr; gap: 18px; align-items: center; }
+  .ring-legend { display: flex; flex-direction: column; gap: 8px; font-size: 12.5px; }
+  .ring-legend .row { display: flex; align-items: center; gap: 8px; }
+  .ring-legend .dot { width: 9px; height: 9px; border-radius: 50%; }
 
-  /* Agents grid */
-  .agents {
-    display: grid; grid-template-columns: repeat(3, 1fr); gap: 14px;
-  }
-  @media (max-width: 980px) { .agents { grid-template-columns: repeat(2, 1fr); } }
-  @media (max-width: 600px) { .agents { grid-template-columns: 1fr; } }
-  .agent-card {
-    background: var(--paper); border: 1px solid var(--pearl);
-    border-radius: var(--radius); padding: 0;
-    box-shadow: var(--shadow-subtle);
-    display: flex; min-height: 150px; overflow: hidden;
-    cursor: pointer; transition: box-shadow .15s, transform .15s;
-  }
-  .agent-card:hover { box-shadow: var(--shadow-lift); transform: translateY(-1px); }
-  .agent-card .num-strip {
-    width: 64px; background: var(--favesco-deep); color: white;
-    display: grid; place-items: center;
-    font-family: var(--font-display); font-weight: 700; font-size: 28px;
-  }
-  .agent-card.active .num-strip { background: var(--emerald); }
-  .agent-card .ac-body { padding: 14px 16px; flex: 1; }
-  .agent-card .ac-name { font-weight: 700; font-size: 14.5px; margin: 0 0 4px; }
-  .agent-card .ac-desc { font-size: 12.5px; color: var(--slate); line-height: 1.45; }
-  .agent-card .ac-foot { margin-top: 8px; display: flex; gap: 8px; align-items: center; }
+  .page { display: none; }
+  .page.active { display: block; }
 
-  /* Chat */
-  .chat-wrap { display: grid; grid-template-columns: 1fr 1.4fr; gap: 18px; margin-top: 16px; }
-  @media (max-width: 980px) { .chat-wrap { grid-template-columns: 1fr; } }
-  .chat-side {
-    background: var(--paper); border: 1px solid var(--pearl); border-radius: var(--radius);
-    padding: 18px; box-shadow: var(--shadow-subtle);
-  }
-  .chat-side h3 { font-family: var(--font-display); font-weight: 600; font-size: 16px; margin: 0 0 12px; }
-  .agent-pick {
-    padding: 10px 12px; border-radius: 10px; margin-bottom: 8px; cursor: pointer;
-    border: 1px solid var(--pearl); background: var(--bone);
-    display: flex; gap: 10px; align-items: center;
-  }
-  .agent-pick.selected { border-color: var(--favesco-blue); background: var(--favesco-mist); }
-  .agent-pick .ap-num {
-    width: 30px; height: 30px; border-radius: 8px;
-    background: var(--favesco-deep); color: white;
-    display: grid; place-items: center; font-weight: 700; font-size: 13px;
-  }
-  .agent-pick .ap-info { flex: 1; }
-  .agent-pick .ap-info .ap-name { font-weight: 600; font-size: 13.5px; }
-  .agent-pick .ap-info .ap-role { font-size: 11.5px; color: var(--slate); }
-  .api-config { margin-top: 14px; padding-top: 14px; border-top: 1px solid var(--pearl); }
-  .api-config label { font-size: 12px; color: var(--slate); display: block; margin-bottom: 6px; font-weight: 600; }
-  .api-config input {
-    width: 100%; padding: 8px 10px; border: 1px solid var(--pearl); border-radius: 8px;
-    font-family: var(--font-mono); font-size: 12px;
-  }
-  .api-config .hint { font-size: 11px; color: var(--slate); margin-top: 6px; }
+  .chat-fab { position: fixed; bottom: 24px; right: 24px; z-index: 40; width: 52px; height: 52px; border-radius: 50%; background: var(--ink); color: #fff; border: 0; display: grid; place-items: center; cursor: pointer; box-shadow: var(--shadow-lg); transition: transform .12s, background .12s; }
+  .chat-fab:hover { transform: scale(1.05); background: var(--accent-deep); }
+  .chat-fab svg { width: 22px; height: 22px; }
+  .chat-fab .dot { position: absolute; top: 6px; right: 6px; width: 12px; height: 12px; border-radius: 50%; background: var(--success); border: 2px solid var(--ink); }
 
-  .chat {
-    background: var(--paper); border: 1px solid var(--pearl); border-radius: var(--radius);
-    box-shadow: var(--shadow-soft); display: flex; flex-direction: column; min-height: 540px;
-  }
-  .chat-head {
-    padding: 14px 18px; border-bottom: 1px solid var(--pearl);
-    display: flex; align-items: center; gap: 12px;
-  }
-  .chat-head .agent-badge {
-    width: 36px; height: 36px; border-radius: 8px; background: var(--favesco-deep); color: white;
-    display: grid; place-items: center; font-weight: 700;
-  }
-  .chat-head .ch-info .ch-name { font-weight: 700; font-size: 14.5px; }
-  .chat-head .ch-info .ch-status { font-size: 11.5px; color: var(--emerald); display: flex; align-items: center; gap: 6px; }
-  .chat-head .ch-info .ch-status::before {
-    content: ""; width: 7px; height: 7px; background: var(--emerald); border-radius: 50%;
-  }
-  .chat-body {
-    flex: 1; padding: 18px; overflow-y: auto; display: flex; flex-direction: column; gap: 12px;
-    background: linear-gradient(180deg, var(--cream), var(--paper));
-    max-height: 60vh;
-  }
-  .msg { display: flex; gap: 10px; max-width: 80%; }
+  .chat-panel { position: fixed; top: 0; right: 0; bottom: 0; width: 460px; background: var(--bg-elevated); box-shadow: -8px 0 24px rgba(15,23,42,.10); border-left: 1px solid var(--border); transform: translateX(100%); transition: transform .25s ease; z-index: 50; display: flex; flex-direction: column; }
+  .chat-panel.open { transform: translateX(0); }
+  @media (max-width: 600px) { .chat-panel { width: 100%; } }
+  .chat-head { padding: 14px 18px; border-bottom: 1px solid var(--border); display: flex; align-items: center; gap: 12px; }
+  .chat-head .badge { width: 36px; height: 36px; border-radius: 8px; background: var(--ink); color: #fff; display: grid; place-items: center; font-weight: 700; font-size: 12px; }
+  .chat-head .info { flex: 1; line-height: 1.2; }
+  .chat-head .info .name { font-weight: 700; font-size: 14px; }
+  .chat-head .info .status { font-size: 11.5px; color: var(--success); display: flex; align-items: center; gap: 5px; margin-top: 2px; }
+  .chat-head .info .status::before { content: ''; width: 6px; height: 6px; background: var(--success); border-radius: 50%; }
+  .chat-head .close { background: transparent; border: 0; color: var(--muted); cursor: pointer; padding: 6px; }
+  .agent-switcher { padding: 10px 14px; border-bottom: 1px solid var(--border); background: #FAFBFC; display: flex; gap: 6px; overflow-x: auto; }
+  .agent-chip { background: var(--bg-elevated); border: 1px solid var(--border); padding: 5px 10px; border-radius: 6px; font-size: 11.5px; font-weight: 500; color: var(--ink-soft); white-space: nowrap; cursor: pointer; flex-shrink: 0; display: flex; align-items: center; gap: 5px; }
+  .agent-chip:hover { border-color: var(--border-strong); }
+  .agent-chip.selected { background: var(--ink); color: #fff; border-color: var(--ink); }
+  .agent-chip .num { font-family: var(--mono); font-size: 10px; opacity: .7; }
+  .chat-body { flex: 1; overflow-y: auto; padding: 16px; display: flex; flex-direction: column; gap: 10px; background: var(--bg); }
+  .msg { display: flex; gap: 8px; max-width: 88%; }
   .msg.from-agent { align-self: flex-start; }
   .msg.from-user { align-self: flex-end; flex-direction: row-reverse; }
-  .msg .bubble {
-    padding: 10px 14px; border-radius: 14px; font-size: 14px; line-height: 1.5;
-    box-shadow: var(--shadow-subtle);
-    white-space: pre-wrap; word-wrap: break-word;
-  }
-  .msg.from-agent .bubble { background: var(--paper); border: 1px solid var(--pearl); border-bottom-left-radius: 4px; }
-  .msg.from-user .bubble { background: var(--favesco-deep); color: white; border-bottom-right-radius: 4px; }
-  .msg .stamp {
-    width: 28px; height: 28px; border-radius: 50%; flex-shrink: 0;
-    display: grid; place-items: center; font-size: 11px; font-weight: 700;
-  }
-  .msg.from-agent .stamp { background: var(--favesco-mist); color: var(--favesco-deep); }
-  .msg.from-user .stamp { background: var(--favesco-soft); color: var(--favesco-deep); }
-  .chat-foot {
-    padding: 12px; border-top: 1px solid var(--pearl); display: flex; gap: 8px;
-    background: var(--paper);
-  }
-  .chat-foot input {
-    flex: 1; padding: 11px 14px; border: 1px solid var(--pearl); border-radius: 10px;
-    font-family: var(--font-body); font-size: 14px;
-  }
-  .chat-foot input:focus { outline: 2px solid var(--favesco-soft); border-color: var(--favesco-blue); }
-  .chat-foot button {
-    padding: 10px 18px; border: 0; border-radius: 10px; background: var(--favesco-deep);
-    color: white; font-weight: 600; cursor: pointer; font-family: var(--font-body); font-size: 14px;
-  }
-  .chat-foot button:hover { background: var(--favesco-blue); }
-  .chat-foot button:disabled { opacity: .5; cursor: not-allowed; }
-  .suggestions { display: flex; flex-wrap: wrap; gap: 8px; padding: 0 18px 12px; }
-  .suggestions .chip {
-    border: 1px solid var(--pearl); background: var(--bone);
-    padding: 7px 12px; border-radius: 999px; font-size: 12.5px; cursor: pointer;
-    color: var(--graphite);
-  }
-  .suggestions .chip:hover { border-color: var(--favesco-blue); color: var(--favesco-deep); }
-
-  /* Discovery section */
-  .discovery {
-    background: var(--favesco-deep); color: white; border-radius: var(--radius);
-    padding: 28px clamp(20px, 3vw, 36px); margin-top: 28px;
-  }
-  .discovery h2 { font-family: var(--font-display); font-weight: 600; font-size: 22px; margin: 0 0 6px; color: white; }
-  .discovery .lead { color: var(--favesco-soft); margin: 0 0 20px; font-size: 14px; }
-  .disco-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 14px; }
-  @media (max-width: 980px) { .disco-grid { grid-template-columns: repeat(2, 1fr); } }
-  @media (max-width: 540px) { .disco-grid { grid-template-columns: 1fr; } }
-  .disco {
-    background: rgba(255,255,255,.06); border: 1px solid rgba(255,255,255,.10);
-    border-radius: 10px; padding: 14px;
-  }
-  .disco .d-num {
-    display: inline-block; font-family: var(--font-mono); font-size: 11px;
-    background: var(--favesco-soft); color: var(--favesco-deep);
-    padding: 2px 7px; border-radius: 4px; font-weight: 700; margin-bottom: 8px;
-  }
-  .disco .d-title { font-weight: 700; font-size: 14px; margin-bottom: 4px; }
-  .disco .d-body { font-size: 12.5px; color: var(--favesco-soft); line-height: 1.5; }
-
-  /* Footer */
-  footer { color: var(--slate); font-size: 12.5px; text-align: center; padding: 32px; }
-  footer .mark { color: var(--favesco-deep); font-weight: 600; }
-
-  /* Modal */
-  .modal-back {
-    display: none; position: fixed; inset: 0; background: rgba(15,27,45,.55);
-    align-items: center; justify-content: center; z-index: 100; padding: 20px;
-  }
-  .modal-back.open { display: flex; }
-  .modal {
-    background: var(--paper); border-radius: var(--radius); max-width: 560px; width: 100%;
-    padding: 26px; box-shadow: var(--shadow-lift);
-  }
-  .modal h3 { font-family: var(--font-display); font-weight: 600; font-size: 20px; margin: 0 0 6px; }
-  .modal .mclose { float: right; cursor: pointer; color: var(--slate); font-size: 22px; line-height: 1; }
-  .modal-body { font-size: 14px; color: var(--graphite); line-height: 1.55; }
-  .modal-body .row { margin: 10px 0; }
-  .modal-body .row strong { color: var(--favesco-deep); }
-
-  /* Typing indicator */
-  .typing { display: flex; gap: 4px; padding: 8px 0; }
-  .typing .d { width: 7px; height: 7px; background: var(--silver); border-radius: 50%; animation: bounce 1.2s infinite; }
+  .msg .bubble { padding: 10px 13px; border-radius: 12px; font-size: 13.5px; line-height: 1.5; white-space: pre-wrap; word-wrap: break-word; }
+  .msg.from-agent .bubble { background: var(--bg-elevated); border: 1px solid var(--border); border-bottom-left-radius: 4px; color: var(--ink); }
+  .msg.from-user .bubble { background: var(--ink); color: #fff; border-bottom-right-radius: 4px; }
+  .msg .av { width: 26px; height: 26px; border-radius: 50%; flex-shrink: 0; display: grid; place-items: center; font-weight: 700; font-size: 10.5px; }
+  .msg.from-agent .av { background: var(--accent-soft); color: var(--accent-deep); }
+  .msg.from-user .av { background: var(--ink); color: #fff; }
+  .typing { display: flex; gap: 4px; padding: 6px 0; align-items: center; }
+  .typing .d { width: 6px; height: 6px; background: var(--muted-soft); border-radius: 50%; animation: bounce 1.2s infinite; }
   .typing .d:nth-child(2) { animation-delay: .15s; }
   .typing .d:nth-child(3) { animation-delay: .3s; }
-  @keyframes bounce { 0%, 60%, 100% { opacity: .3; transform: translateY(0); } 30% { opacity: 1; transform: translateY(-4px); } }
+  @keyframes bounce { 0%, 60%, 100% { opacity: .3; transform: translateY(0); } 30% { opacity: 1; transform: translateY(-3px); } }
+  .suggestions { display: flex; flex-wrap: wrap; gap: 6px; padding: 8px 14px 0; }
+  .suggestions .chip { border: 1px solid var(--border); background: var(--bg-elevated); padding: 5px 10px; border-radius: 999px; font-size: 11.5px; cursor: pointer; color: var(--ink-soft); }
+  .suggestions .chip:hover { border-color: var(--ink); color: var(--ink); }
+  .chat-foot { padding: 12px 14px; border-top: 1px solid var(--border); display: flex; gap: 8px; background: var(--bg-elevated); }
+  .chat-foot input { flex: 1; padding: 9px 12px; border: 1px solid var(--border); border-radius: 8px; font-family: inherit; font-size: 13.5px; }
+  .chat-foot input:focus { outline: 0; border-color: var(--accent); }
+  .chat-foot button { padding: 9px 14px; border: 0; border-radius: 8px; background: var(--ink); color: #fff; font-weight: 600; font-size: 13px; }
+  .chat-foot button:disabled { opacity: .5; cursor: not-allowed; }
+  .api-hint { padding: 8px 14px; font-size: 11px; color: var(--muted); background: #FAFBFC; border-bottom: 1px solid var(--border); }
+  .api-hint input { width: 200px; margin-left: 6px; padding: 3px 6px; border: 1px solid var(--border); border-radius: 4px; font-family: var(--mono); font-size: 10.5px; }
+
+  .modal-back { display: none; position: fixed; inset: 0; background: rgba(15,23,42,.55); align-items: center; justify-content: center; z-index: 60; padding: 24px; }
+  .modal-back.open { display: flex; }
+  .modal { background: var(--bg-elevated); border-radius: var(--radius); max-width: 620px; width: 100%; max-height: 88vh; overflow-y: auto; box-shadow: var(--shadow-lg); }
+  .modal-head { padding: 18px 22px; border-bottom: 1px solid var(--border); display: flex; justify-content: space-between; align-items: center; }
+  .modal-head h3 { margin: 0; font-size: 16px; font-weight: 700; }
+  .modal-head .x { background: transparent; border: 0; color: var(--muted); cursor: pointer; padding: 4px; font-size: 20px; line-height: 1; }
+  .modal-body { padding: 22px; }
+  .modal-body .section { margin-bottom: 18px; }
+  .modal-body .section:last-child { margin-bottom: 0; }
+  .modal-body .section h4 { margin: 0 0 6px; font-size: 11px; color: var(--muted); font-weight: 600; letter-spacing: .5px; text-transform: uppercase; }
+  .modal-body .section p { margin: 0; color: var(--ink-soft); font-size: 13.5px; line-height: 1.55; }
+  .modal-body .kv { display: grid; grid-template-columns: 130px 1fr; gap: 12px 16px; font-size: 13px; }
+  .modal-body .kv .k { color: var(--muted); font-weight: 500; }
+  .modal-body .kv .v { color: var(--ink); font-weight: 500; }
+
+  .geo-row { display: flex; align-items: center; gap: 12px; padding: 10px 18px; border-bottom: 1px solid var(--border); }
+  .geo-row:last-child { border-bottom: 0; }
+  .geo-name { width: 130px; font-size: 13px; font-weight: 600; }
+  .geo-track { flex: 1; height: 22px; background: var(--bg); border-radius: 5px; position: relative; overflow: hidden; }
+  .geo-fill { height: 100%; background: linear-gradient(90deg, var(--accent), var(--accent-deep)); border-radius: 5px; display: flex; align-items: center; padding: 0 8px; color: #fff; font-size: 11px; font-weight: 600; font-variant-numeric: tabular-nums; }
+  .geo-foot { width: 90px; text-align: right; font-size: 11.5px; color: var(--muted); font-variant-numeric: tabular-nums; }
+
+  .placeholder { background: var(--bg-elevated); border: 1px dashed var(--border-strong); border-radius: var(--radius); padding: 56px 24px; text-align: center; color: var(--muted); }
+  .placeholder h2 { color: var(--ink); font-size: 18px; margin: 0 0 8px; }
+  .placeholder p { margin: 0 auto; max-width: 480px; font-size: 13.5px; line-height: 1.55; }
+
+  @media (max-width: 900px) {
+    .app { grid-template-columns: 1fr; }
+    .sidebar { display: none; }
+  }
 </style>
 </head>
 <body>
 
-<div class="topbar">
-  <div class="brand">
-    <div class="brand-mark">F</div>
-    <div class="brand-text">
-      <span class="name">FAVESCO</span>
-      <span class="sub">Inteligencia Artificial · Recursos Humanos</span>
+<div class="app">
+  <aside class="sidebar">
+    <div class="brand">
+      <div class="brand-mark">F</div>
+      <div class="brand-text">
+        <div class="name">Favesco</div>
+        <div class="sub">People Intelligence</div>
+      </div>
     </div>
-  </div>
-  <div class="topbar-right">
-    <div class="who">
-      <span class="name">Renato Hernández</span>
-      <span class="role">Director de RH</span>
+
+    <div class="nav-section">
+      <div class="nav-label">Workspace</div>
+      <div class="nav-item active" data-page="overview">
+        <svg fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M3 12L12 3l9 9M5 10v10h14V10"/></svg>
+        Resumen ejecutivo
+      </div>
+      <div class="nav-item" data-page="bandeja">
+        <svg fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M4 4h16v12H5l-1 4z"/></svg>
+        Bandeja de hallazgos
+        <span class="badge danger">7</span>
+      </div>
+      <div class="nav-item" data-page="personas">
+        <svg fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><circle cx="9" cy="8" r="3"/><circle cx="17" cy="9" r="2.5"/><path d="M3 20c0-3 3-5 6-5s6 2 6 5M15 19c0-2 2-4 4-4s2 2 2 4"/></svg>
+        Personas
+        <span class="badge">427</span>
+      </div>
     </div>
-    <div class="avatar">RH</div>
+
+    <div class="nav-section">
+      <div class="nav-label">Operaciones</div>
+      <div class="nav-item" data-page="nomina">
+        <svg fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><rect x="3" y="5" width="18" height="14" rx="2"/><path d="M3 10h18M7 15h2M11 15h6"/></svg>
+        Nómina
+        <span class="badge danger">3</span>
+      </div>
+      <div class="nav-item" data-page="jornadas">
+        <svg fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 2"/></svg>
+        Control de jornadas
+      </div>
+      <div class="nav-item" data-page="cumplimiento">
+        <svg fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M12 3l8 4v5c0 5-3 8-8 9-5-1-8-4-8-9V7l8-4z"/><path d="M9 12l2 2 4-4"/></svg>
+        Cumplimiento
+        <span class="badge">23</span>
+      </div>
+      <div class="nav-item" data-page="talento">
+        <svg fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M3 17l5-5 4 4 8-9"/><path d="M14 7h7v7"/></svg>
+        Talento &amp; Riesgo
+      </div>
+      <div class="nav-item" data-page="reclutamiento">
+        <svg fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><circle cx="11" cy="11" r="6"/><path d="M21 21l-5-5"/></svg>
+        Reclutamiento
+      </div>
+      <div class="nav-item" data-page="clima">
+        <svg fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M21 12c0 5-4 9-9 9s-9-4-9-9 4-9 9-9c3 0 5 1 7 3"/><path d="M9 12l2 2 4-4"/></svg>
+        Clima organizacional
+      </div>
+    </div>
+
+    <div class="nav-section">
+      <div class="nav-label">Inteligencia</div>
+      <div class="nav-item" data-page="agentes">
+        <svg fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><circle cx="12" cy="12" r="3"/><path d="M12 3v3M12 18v3M3 12h3M18 12h3M5 5l2 2M17 17l2 2M5 19l2-2M17 7l2-2"/></svg>
+        Agentes
+        <span class="badge">9</span>
+      </div>
+      <div class="nav-item" data-page="reportes">
+        <svg fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M14 3H6a2 2 0 00-2 2v14a2 2 0 002 2h12a2 2 0 002-2V9z"/><path d="M14 3v6h6M8 13h8M8 17h5"/></svg>
+        Reportes
+      </div>
+      <div class="nav-item" data-page="auditoria">
+        <svg fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M4 4h16v16H4z"/><path d="M8 9h8M8 13h8M8 17h4"/></svg>
+        Auditoría
+      </div>
+    </div>
+
+    <div class="sidebar-foot">
+      <div class="user-avatar">RH</div>
+      <div class="user-info">
+        <div class="name">Renato Hernández</div>
+        <div class="role">Director de RH</div>
+      </div>
+      <svg class="user-cog" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><circle cx="12" cy="12" r="3"/><path d="M19 12a7 7 0 00-.1-1l2-1.5-2-3.5-2.4 1a7 7 0 00-1.7-1L14 3.5h-4l-.4 2.4a7 7 0 00-1.7 1l-2.4-1-2 3.5L5.6 11a7 7 0 000 2l-2 1.5 2 3.5 2.4-1a7 7 0 001.7 1L10 20.5h4l.4-2.4a7 7 0 001.7-1l2.4 1 2-3.5L19 13.1c.1-.4.1-.7.1-1.1z"/></svg>
+    </div>
+  </aside>
+
+  <div class="main">
+    <header class="topbar">
+      <div class="crumbs">
+        <span>Favesco</span>
+        <svg fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M9 6l6 6-6 6"/></svg>
+        <strong id="crumb-page">Resumen ejecutivo</strong>
+      </div>
+      <div class="search">
+        <svg class="icon" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><circle cx="11" cy="11" r="6"/><path d="M21 21l-5-5"/></svg>
+        <input placeholder="Buscar personas, hallazgos, reportes…" />
+        <span class="kbd">⌘ K</span>
+      </div>
+      <div class="topbar-actions">
+        <button class="icon-btn" title="Notificaciones">
+          <svg fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M6 9a6 6 0 0112 0v4l2 3H4l2-3V9z"/><path d="M10 19a2 2 0 004 0"/></svg>
+          <span class="dot"></span>
+        </button>
+        <button class="icon-btn" title="Ayuda">
+          <svg fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><path d="M9 9c0-2 2-3 3-3s3 1 3 3-3 2-3 4M12 17h.01"/></svg>
+        </button>
+        <div class="divider"></div>
+        <button class="btn-primary" onclick="openChat()">
+          <svg fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><circle cx="12" cy="12" r="3"/><path d="M12 3v3M12 18v3M3 12h3M18 12h3"/></svg>
+          Hablar con un agente
+        </button>
+      </div>
+    </header>
+
+    <main class="content">
+
+      <section class="page active" id="page-overview">
+        <div class="page-head">
+          <div>
+            <h1>Resumen ejecutivo</h1>
+            <div class="subtitle">Estado consolidado de personas, nómina, cumplimiento y operación.</div>
+            <div class="live-stamp"><span class="pulse"></span> Datos sincronizados hace 28 segundos · Próxima actualización en 2 min</div>
+          </div>
+          <div class="filter-bar">
+            <button class="filter-btn">
+              <svg fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><rect x="3" y="4" width="18" height="18" rx="2"/><path d="M3 10h18M8 2v4M16 2v4"/></svg>
+              Mayo 2026
+            </button>
+            <button class="filter-btn">
+              <svg fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M3 6h18M6 12h12M10 18h4"/></svg>
+              Todas las plantas
+            </button>
+            <button class="filter-btn active">
+              <svg fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M12 5v14M5 12h14"/></svg>
+              Comparar vs. abril
+            </button>
+            <button class="filter-btn">
+              <svg fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M21 15v4a2 2 0 01-2 2H5a2 2 0 01-2-2v-4M7 10l5 5 5-5M12 15V3"/></svg>
+              Exportar
+            </button>
+          </div>
+        </div>
+
+        <div class="kpi-grid">
+          <div class="kpi">
+            <div class="kpi-top"><div class="label">Plantilla activa</div><div class="icon-wrap"><svg width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><circle cx="9" cy="8" r="3"/><path d="M3 20c0-3 3-5 6-5s6 2 6 5"/><circle cx="17" cy="9" r="2.5"/></svg></div></div>
+            <div class="kpi-mid"><div class="value">427</div><div class="unit">personas</div></div>
+            <div class="spark"><canvas id="spark-headcount"></canvas></div>
+            <div class="kpi-foot"><span class="delta up">▲ 1.4%</span><span>vs. abril</span></div>
+          </div>
+          <div class="kpi warn">
+            <div class="kpi-top"><div class="label">Ausentismo</div><div class="icon-wrap"><svg width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 2"/></svg></div></div>
+            <div class="kpi-mid"><div class="value">3.4</div><div class="unit">%</div></div>
+            <div class="spark"><canvas id="spark-absent"></canvas></div>
+            <div class="kpi-foot"><span class="delta down">▲ 0.7 pp</span><span>sobre objetivo (2.7%)</span></div>
+          </div>
+          <div class="kpi danger">
+            <div class="kpi-top"><div class="label">Rotación 12m</div><div class="icon-wrap"><svg width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M3 12c0 5 4 9 9 9s9-4 9-9-4-9-9-9c-3 0-5 1-7 3"/><path d="M3 4v5h5"/></svg></div></div>
+            <div class="kpi-mid"><div class="value">18.2</div><div class="unit">%</div></div>
+            <div class="spark"><canvas id="spark-rotation"></canvas></div>
+            <div class="kpi-foot"><span class="delta down">▲ 2.1 pp</span><span>industria 16.1%</span></div>
+          </div>
+          <div class="kpi">
+            <div class="kpi-top"><div class="label">Costo de nómina</div><div class="icon-wrap"><svg width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M12 2v20M17 6H9a3 3 0 000 6h6a3 3 0 010 6H7"/></svg></div></div>
+            <div class="kpi-mid"><div class="value">8.42</div><div class="unit">M MXN</div></div>
+            <div class="spark"><canvas id="spark-cost"></canvas></div>
+            <div class="kpi-foot"><span class="delta flat">▲ 0.8%</span><span>en línea con proyección</span></div>
+          </div>
+          <div class="kpi success">
+            <div class="kpi-top"><div class="label">Engagement (eNPS)</div><div class="icon-wrap"><svg width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M3 12l5 5L21 4"/></svg></div></div>
+            <div class="kpi-mid"><div class="value">+42</div></div>
+            <div class="spark"><canvas id="spark-enps"></canvas></div>
+            <div class="kpi-foot"><span class="delta up">▲ 6 pts</span><span>vs. Q1 2026</span></div>
+          </div>
+          <div class="kpi danger">
+            <div class="kpi-top"><div class="label">NOM-035</div><div class="icon-wrap"><svg width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M12 3l8 4v5c0 5-3 8-8 9-5-1-8-4-8-9V7z"/></svg></div></div>
+            <div class="kpi-mid"><div class="value">67</div><div class="unit">% cumplido</div></div>
+            <div class="spark"><canvas id="spark-nom"></canvas></div>
+            <div class="kpi-foot"><span class="delta down">Tepeji vence 14 días</span></div>
+          </div>
+          <div class="kpi warn">
+            <div class="kpi-top"><div class="label">Horas extra</div><div class="icon-wrap"><svg width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l4 2"/></svg></div></div>
+            <div class="kpi-mid"><div class="value">1,284</div><div class="unit">hrs/sem</div></div>
+            <div class="spark"><canvas id="spark-overtime"></canvas></div>
+            <div class="kpi-foot"><span class="delta down">▲ 4%</span><span>2 personas sobre tope legal</span></div>
+          </div>
+          <div class="kpi violet">
+            <div class="kpi-top"><div class="label">Acciones de agentes (24h)</div><div class="icon-wrap"><svg width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><circle cx="12" cy="12" r="3"/><path d="M12 3v3M12 18v3M3 12h3M18 12h3"/></svg></div></div>
+            <div class="kpi-mid"><div class="value">1,847</div></div>
+            <div class="spark"><canvas id="spark-agents"></canvas></div>
+            <div class="kpi-foot"><span class="delta up">▲ 12%</span><span>vs. promedio 7d</span></div>
+          </div>
+        </div>
+
+        <div class="grid grid-12" style="margin-bottom: 18px;">
+          <div class="col-7">
+            <div class="card">
+              <div class="card-head">
+                <div>
+                  <h3>Bandeja de hallazgos prioritarios</h3>
+                  <div class="meta">7 abiertos · 3 críticos · SLA en cuenta regresiva</div>
+                </div>
+                <div class="tabs">
+                  <button class="tab active">Todos</button>
+                  <button class="tab">Críticos</button>
+                  <button class="tab">Mis pendientes</button>
+                </div>
+              </div>
+              <div class="briefing-list">
+                <div class="briefing-row">
+                  <div class="severity-mark p1">P1</div>
+                  <div>
+                    <div class="b-title">M. Hernández en riesgo alto de renuncia</div>
+                    <div class="b-desc">Caída de productividad 23% en 6 semanas + 3 retardos + salario 18% bajo mercado. Score de fuga 87/100.</div>
+                    <div class="b-meta"><span class="agent-tag">03 Vigilante de Talento</span><span>Detectado hoy 06:14</span><span>Planta Querétaro</span></div>
+                  </div>
+                  <div class="b-actions"><div class="sla urgent">3h 47m</div><span>Revisión RH</span></div>
+                </div>
+                <div class="briefing-row">
+                  <div class="severity-mark p1">P1</div>
+                  <div>
+                    <div class="b-title">NOM-035 Planta Tepeji vence en 14 días</div>
+                    <div class="b-desc">Sin encuesta aplicada, multa STPS estimada $400K MXN. Guardián tiene cuestionario listo para 134 personas.</div>
+                    <div class="b-meta"><span class="agent-tag">04 Guardián de Cumplimiento</span><span>Aviso desde hace 5 días</span></div>
+                  </div>
+                  <div class="b-actions"><div class="sla urgent">14d</div><span>Acción legal</span></div>
+                </div>
+                <div class="briefing-row">
+                  <div class="severity-mark p1">P1</div>
+                  <div>
+                    <div class="b-title">3 anomalías detectadas antes del pago del jueves</div>
+                    <div class="b-desc">Horas extra fuera de tope legal (2), bono antigüedad omitido (1), variación SBC (1). Impacto: $47,200 MXN.</div>
+                    <div class="b-meta"><span class="agent-tag">02 Auditor de Nómina</span><span>Ejecución T-24h pre-pago</span></div>
+                  </div>
+                  <div class="b-actions"><div class="sla urgent">3d 6h</div><span>Pre-autorización</span></div>
+                </div>
+                <div class="briefing-row">
+                  <div class="severity-mark p2">P2</div>
+                  <div>
+                    <div class="b-title">3 choferes HazMat con examen médico próximo a vencer</div>
+                    <div class="b-desc">Vence en 18 días. Sin renovación pierden licencia E; flota baja capacidad 25%.</div>
+                    <div class="b-meta"><span class="agent-tag">04 Guardián de Cumplimiento</span><span>Planta Monterrey</span></div>
+                  </div>
+                  <div class="b-actions"><div class="sla warning">18d</div><span>Operación</span></div>
+                </div>
+                <div class="briefing-row">
+                  <div class="severity-mark p2">P2</div>
+                  <div>
+                    <div class="b-title">Retardos repetidos en Producción Tepeji</div>
+                    <div class="b-desc">5 colaboradores con 3+ retardos en 2 semanas. Patrón estadísticamente significativo (p&lt;0.05).</div>
+                    <div class="b-meta"><span class="agent-tag">08 Control de Jornadas</span><span>Gerente: J. Castillo</span></div>
+                  </div>
+                  <div class="b-actions"><div class="sla warning">24h</div><span>Conversación</span></div>
+                </div>
+                <div class="briefing-row">
+                  <div class="severity-mark p3">P3</div>
+                  <div>
+                    <div class="b-title">5 contratos individuales por renovar</div>
+                    <div class="b-desc">Vencen entre el 8 y 22 de junio. Borradores listos para revisión legal.</div>
+                    <div class="b-meta"><span class="agent-tag">04 Guardián de Cumplimiento</span></div>
+                  </div>
+                  <div class="b-actions"><div class="sla">23d</div><span>Legal</span></div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div class="col-5">
+            <div class="card" style="margin-bottom: 14px;">
+              <div class="card-head">
+                <h3>Costo de nómina (12 meses)</h3>
+                <span class="meta">Quincenal · MXN</span>
+              </div>
+              <div class="card-body" style="height: 220px;">
+                <canvas id="chart-cost"></canvas>
+              </div>
+            </div>
+            <div class="card">
+              <div class="card-head">
+                <h3>Salud de cumplimiento</h3>
+                <span class="pill pill-warn no-dot">2 críticos</span>
+              </div>
+              <div class="card-body">
+                <div class="ring-wrap">
+                  <canvas id="ring-compliance" width="140" height="140"></canvas>
+                  <div class="ring-legend">
+                    <div class="row"><span class="dot" style="background: var(--success)"></span>NOM-035 Qro y MTY · vigentes</div>
+                    <div class="row"><span class="dot" style="background: var(--danger)"></span>NOM-035 Tepeji · 14 días</div>
+                    <div class="row"><span class="dot" style="background: var(--warn)"></span>Exámenes HazMat · 18 días</div>
+                    <div class="row"><span class="dot" style="background: var(--bg)"></span>23 obligaciones próximas</div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="grid grid-12" style="margin-bottom: 18px;">
+          <div class="col-8">
+            <div class="card">
+              <div class="card-head">
+                <div>
+                  <h3>Plantilla por área y planta</h3>
+                  <div class="meta">427 personas activas · Actualizado 12:34</div>
+                </div>
+                <div class="tabs">
+                  <button class="tab active">Composición</button>
+                  <button class="tab">Tendencia 12m</button>
+                  <button class="tab">Por antigüedad</button>
+                </div>
+              </div>
+              <div class="card-body" style="height: 280px;">
+                <canvas id="chart-headcount"></canvas>
+              </div>
+            </div>
+          </div>
+          <div class="col-4">
+            <div class="card">
+              <div class="card-head">
+                <h3>Distribución geográfica</h3>
+                <span class="meta">% del total</span>
+              </div>
+              <div class="geo-row"><div class="geo-name">Querétaro</div><div class="geo-track"><div class="geo-fill" style="width: 78%;">39.3%</div></div><div class="geo-foot">168 ppl</div></div>
+              <div class="geo-row"><div class="geo-name">Tepeji</div><div class="geo-track"><div class="geo-fill" style="width: 62%; background: linear-gradient(90deg, var(--danger), #7C1D1D);">31.4%</div></div><div class="geo-foot">134 ppl</div></div>
+              <div class="geo-row"><div class="geo-name">Monterrey</div><div class="geo-track"><div class="geo-fill" style="width: 48%;">24.4%</div></div><div class="geo-foot">104 ppl</div></div>
+              <div class="geo-row"><div class="geo-name">CDMX (corporativo)</div><div class="geo-track"><div class="geo-fill" style="width: 10%;">4.9%</div></div><div class="geo-foot">21 ppl</div></div>
+            </div>
+          </div>
+        </div>
+
+        <div class="grid grid-12">
+          <div class="col-7">
+            <div class="card">
+              <div class="card-head">
+                <div>
+                  <h3>Empleados clave en riesgo de fuga</h3>
+                  <div class="meta">Modelo Vigilante de Talento · refresca cada lunes 06:00</div>
+                </div>
+                <button class="filter-btn" style="font-size: 11.5px;">Ver los 12</button>
+              </div>
+              <table>
+                <thead>
+                  <tr><th>Persona</th><th>Puesto</th><th>Antigüedad</th><th>Riesgo</th><th>Factor principal</th><th class="num">Score</th></tr>
+                </thead>
+                <tbody>
+                  <tr>
+                    <td><div class="name-cell"><div class="name-avatar" style="background: #B91C1C;">MH</div><div><strong>Mario Hernández</strong><div style="font-size: 11.5px; color: var(--muted);">Ing. Procesos Sr.</div></div></div></td>
+                    <td>Ingeniería · Querétaro</td>
+                    <td>4.2 años</td>
+                    <td><div class="risk-bar"><div class="track"><div class="fill" style="width: 87%; background: var(--danger);"></div></div><span class="pill pill-danger no-dot">Alto</span></div></td>
+                    <td>Salario 18% bajo mercado</td>
+                    <td class="num"><strong>87</strong>/100</td>
+                  </tr>
+                  <tr>
+                    <td><div class="name-cell"><div class="name-avatar" style="background: #B45309;">LG</div><div><strong>Lucía García</strong><div style="font-size: 11.5px; color: var(--muted);">Coord. Calidad</div></div></div></td>
+                    <td>Producción · Tepeji</td>
+                    <td>2.8 años</td>
+                    <td><div class="risk-bar"><div class="track"><div class="fill" style="width: 72%; background: var(--warn);"></div></div><span class="pill pill-warn no-dot">Medio-alto</span></div></td>
+                    <td>Carga horas extra sostenida</td>
+                    <td class="num"><strong>72</strong>/100</td>
+                  </tr>
+                  <tr>
+                    <td><div class="name-cell"><div class="name-avatar" style="background: #1E5A99;">CR</div><div><strong>Carlos Ramos</strong><div style="font-size: 11.5px; color: var(--muted);">Supervisor HSE</div></div></div></td>
+                    <td>Operaciones · MTY</td>
+                    <td>6.1 años</td>
+                    <td><div class="risk-bar"><div class="track"><div class="fill" style="width: 64%; background: var(--warn);"></div></div><span class="pill pill-warn no-dot">Medio</span></div></td>
+                    <td>Sin promoción 3+ años</td>
+                    <td class="num"><strong>64</strong>/100</td>
+                  </tr>
+                  <tr>
+                    <td><div class="name-cell"><div class="name-avatar" style="background: #6D28D9;">DP</div><div><strong>Daniela Peralta</strong><div style="font-size: 11.5px; color: var(--muted);">Analista Senior</div></div></div></td>
+                    <td>Finanzas · CDMX</td>
+                    <td>1.9 años</td>
+                    <td><div class="risk-bar"><div class="track"><div class="fill" style="width: 58%; background: var(--warn);"></div></div><span class="pill pill-warn no-dot">Medio</span></div></td>
+                    <td>Comentarios negativos en clima</td>
+                    <td class="num"><strong>58</strong>/100</td>
+                  </tr>
+                  <tr>
+                    <td><div class="name-cell"><div class="name-avatar" style="background: #15803D;">JC</div><div><strong>Javier Castillo</strong><div style="font-size: 11.5px; color: var(--muted);">Operador Línea 3</div></div></div></td>
+                    <td>Producción · Tepeji</td>
+                    <td>3.5 años</td>
+                    <td><div class="risk-bar"><div class="track"><div class="fill" style="width: 51%; background: var(--accent);"></div></div><span class="pill pill-info no-dot">Bajo-medio</span></div></td>
+                    <td>3 retardos en 2 semanas</td>
+                    <td class="num"><strong>51</strong>/100</td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+          </div>
+          <div class="col-5">
+            <div class="card">
+              <div class="card-head">
+                <h3>Actividad de agentes (en vivo)</h3>
+                <span class="meta">Últimos 30 min</span>
+              </div>
+              <div class="feed">
+                <div class="feed-item"><div class="feed-dot info">02</div><div class="feed-body"><span class="who">Auditor de Nómina</span> ejecutó <strong>6 reglas</strong> sobre la nómina borrador del jueves · 3 hallazgos generados.<div class="when">Hace 4 min · Tepeji, Querétaro, MTY</div></div></div>
+                <div class="feed-item"><div class="feed-dot success">01</div><div class="feed-body"><span class="who">Asistente del Empleado</span> generó constancia laboral para <strong>P. Mendoza</strong> vía WhatsApp.<div class="when">Hace 7 min</div></div></div>
+                <div class="feed-item"><div class="feed-dot warn">08</div><div class="feed-body"><span class="who">Control de Jornadas</span> detectó retardo &gt;15 min de <strong>J. Castillo</strong>.<div class="when">Hace 12 min · Reloj Tepeji-A2</div></div></div>
+                <div class="feed-item"><div class="feed-dot info">07</div><div class="feed-body"><span class="who">Director Virtual</span> envió briefing matutino a <strong>R. Hernández</strong> vía email y dashboard.<div class="when">Hoy 07:00</div></div></div>
+                <div class="feed-item"><div class="feed-dot success">05</div><div class="feed-body"><span class="who">Reclutador</span> calificó <strong>12 CVs</strong> entrantes para "Ing. Procesos Senior" · 3 candidatos sobre 75/100.<div class="when">Hace 18 min</div></div></div>
+                <div class="feed-item"><div class="feed-dot warn">03</div><div class="feed-body"><span class="who">Vigilante de Talento</span> actualizó score de fuga de <strong>M. Hernández</strong>: 84 → 87.<div class="when">Hace 22 min</div></div></div>
+                <div class="feed-item"><div class="feed-dot info">04</div><div class="feed-body"><span class="who">Guardián de Cumplimiento</span> agendó recordatorio: exámenes HazMat (3 personas) en 18 días.<div class="when">Hace 26 min</div></div></div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <section class="page" id="page-bandeja">
+        <div class="page-head">
+          <div>
+            <h1>Bandeja de hallazgos</h1>
+            <div class="subtitle">Todos los hallazgos emitidos por los agentes con su ciclo de vida.</div>
+          </div>
+          <div class="filter-bar">
+            <button class="filter-btn active">Abiertos (7)</button>
+            <button class="filter-btn">Reconocidos (4)</button>
+            <button class="filter-btn">Resueltos (12)</button>
+            <button class="filter-btn">Descartados (2)</button>
+          </div>
+        </div>
+        <div class="card">
+          <table>
+            <thead><tr><th>Severidad</th><th>Hallazgo</th><th>Agente</th><th>Detectado</th><th>SLA</th><th>Estado</th></tr></thead>
+            <tbody>
+              <tr><td><span class="pill pill-danger no-dot">P1</span></td><td><strong>M. Hernández en riesgo alto de renuncia</strong></td><td>03 Vigilante</td><td>Hoy 06:14</td><td><span class="pill pill-danger no-dot">3h 47m</span></td><td><span class="pill pill-warn">Abierto</span></td></tr>
+              <tr><td><span class="pill pill-danger no-dot">P1</span></td><td><strong>NOM-035 Tepeji vence en 14 días</strong></td><td>04 Cumplimiento</td><td>10 mayo</td><td><span class="pill pill-danger no-dot">14d</span></td><td><span class="pill pill-warn">Abierto</span></td></tr>
+              <tr><td><span class="pill pill-danger no-dot">P1</span></td><td><strong>3 anomalías pre-pago — impacto $47.2K MXN</strong></td><td>02 Auditor</td><td>Hoy 04:00</td><td><span class="pill pill-danger no-dot">3d 6h</span></td><td><span class="pill pill-warn">Abierto</span></td></tr>
+              <tr><td><span class="pill pill-warn no-dot">P2</span></td><td><strong>3 choferes HazMat — examen vence en 18d</strong></td><td>04 Cumplimiento</td><td>12 mayo</td><td><span class="pill pill-warn no-dot">18d</span></td><td><span class="pill pill-info">Reconocido</span></td></tr>
+              <tr><td><span class="pill pill-warn no-dot">P2</span></td><td><strong>Retardos repetidos en Tepeji Línea 3</strong></td><td>08 Jornadas</td><td>Hoy 11:42</td><td><span class="pill pill-warn no-dot">24h</span></td><td><span class="pill pill-warn">Abierto</span></td></tr>
+              <tr><td><span class="pill pill-warn no-dot">P2</span></td><td><strong>L. García — carga horas extra (riesgo fuga)</strong></td><td>03 Vigilante</td><td>Ayer 18:32</td><td><span class="pill no-dot">5d</span></td><td><span class="pill pill-warn">Abierto</span></td></tr>
+              <tr><td><span class="pill pill-neutral no-dot">P3</span></td><td><strong>5 contratos individuales por renovar</strong></td><td>04 Cumplimiento</td><td>11 mayo</td><td><span class="pill no-dot">23d</span></td><td><span class="pill pill-warn">Abierto</span></td></tr>
+            </tbody>
+          </table>
+        </div>
+      </section>
+
+      <section class="page" id="page-agentes">
+        <div class="page-head">
+          <div>
+            <h1>Equipo de agentes</h1>
+            <div class="subtitle">9 agentes especializados operando en español. Estado en tiempo real.</div>
+          </div>
+          <div class="filter-bar">
+            <button class="filter-btn active">Todos (9)</button>
+            <button class="filter-btn">Activos (3)</button>
+            <button class="filter-btn">Fase 2 (3)</button>
+            <button class="filter-btn">Fase 3 (3)</button>
+          </div>
+        </div>
+        <div class="agent-grid" id="agent-grid"></div>
+      </section>
+
+      <section class="page" id="page-nomina">
+        <div class="page-head">
+          <div>
+            <h1>Nómina · Pre-auditoría quincenal</h1>
+            <div class="subtitle">El Auditor revisó la nómina borrador del 30 de mayo. 3 hallazgos requieren tu atención.</div>
+            <div class="live-stamp"><span class="pulse"></span> Sincronizado con NomiPaq hace 4 min</div>
+          </div>
+          <div class="filter-bar">
+            <button class="filter-btn active">Q2-mayo-2026</button>
+            <button class="filter-btn">Q1-mayo-2026 ✓</button>
+            <button class="filter-btn">Q2-abril-2026 ✓</button>
+            <button class="filter-btn">Exportar</button>
+          </div>
+        </div>
+        <div class="kpi-grid" style="grid-template-columns: repeat(4, 1fr);">
+          <div class="kpi"><div class="kpi-top"><div class="label">Total bruto</div></div><div class="kpi-mid"><div class="value">$4.21</div><div class="unit">M MXN</div></div><div class="kpi-foot"><span class="delta flat">+0.4%</span><span>vs. quincena anterior</span></div></div>
+          <div class="kpi"><div class="kpi-top"><div class="label">IMSS empleador</div></div><div class="kpi-mid"><div class="value">$612</div><div class="unit">K MXN</div></div><div class="kpi-foot"><span class="delta flat">+0.2%</span><span></span></div></div>
+          <div class="kpi danger"><div class="kpi-top"><div class="label">Anomalías detectadas</div></div><div class="kpi-mid"><div class="value">3</div></div><div class="kpi-foot"><span class="delta down">Impacto $47.2K</span></div></div>
+          <div class="kpi"><div class="kpi-top"><div class="label">Personas procesadas</div></div><div class="kpi-mid"><div class="value">427</div></div><div class="kpi-foot"><span>de 427</span></div></div>
+        </div>
+        <div class="card" style="margin-top: 18px;">
+          <div class="card-head">
+            <div>
+              <h3>Hallazgos del Auditor — Q2 mayo 2026</h3>
+              <div class="meta">Reglas: horas extra · IMSS SBC · deducciones · bonos · variación neto · duplicados</div>
+            </div>
+            <button class="btn-primary"><svg fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M5 13l4 4L19 7"/></svg> Autorizar ajustes</button>
+          </div>
+          <table>
+            <thead><tr><th>Severidad</th><th>Regla</th><th>Persona</th><th>Detalle</th><th class="num">Impacto MXN</th><th>Acción</th></tr></thead>
+            <tbody>
+              <tr><td><span class="pill pill-danger no-dot">P1</span></td><td><strong>Horas extra fuera de tope legal</strong></td><td>J. Ramírez · Producción Tepeji</td><td>12 hrs extra (tope reforma: 9 hrs)</td><td class="num"><strong>$10,200</strong></td><td><span class="pill pill-warn">Revisar</span></td></tr>
+              <tr><td><span class="pill pill-danger no-dot">P1</span></td><td><strong>Horas extra fuera de tope legal</strong></td><td>A. López · Producción Tepeji</td><td>14 hrs extra (tope reforma: 9 hrs)</td><td class="num"><strong>$8,200</strong></td><td><span class="pill pill-warn">Revisar</span></td></tr>
+              <tr><td><span class="pill pill-warn no-dot">P2</span></td><td><strong>Bono antigüedad omitido</strong></td><td>C. Méndez · Calidad Querétaro</td><td>Cumple 10 años el 18 de mayo · bono $25K no aplicado</td><td class="num"><strong>$25,000</strong></td><td><span class="pill pill-warn">Aplicar</span></td></tr>
+              <tr><td><span class="pill pill-warn no-dot">P3</span></td><td><strong>Variación SBC inusual</strong></td><td>N. García · Administración</td><td>SBC +8% sin ticket de cambio salarial</td><td class="num"><strong>$3,800</strong></td><td><span class="pill pill-info">Investigar</span></td></tr>
+            </tbody>
+          </table>
+        </div>
+      </section>
+
+      <section class="page" id="page-personas"><div class="placeholder"><h2>Personas</h2><p>Listado completo de las 427 personas, su estatus, vencimientos individuales y conversaciones recientes con el Asistente. (Vista demo — datos en producción).</p></div></section>
+      <section class="page" id="page-jornadas"><div class="placeholder"><h2>Control de jornadas</h2><p>Registro de entradas y salidas por reloj checador, conformidad con la reforma laboral 2025, registro legal de jornada por persona.</p></div></section>
+      <section class="page" id="page-cumplimiento"><div class="placeholder"><h2>Cumplimiento</h2><p>Calendario consolidado de obligaciones: NOM-035, IMSS, STPS, exámenes médicos, contratos. 23 obligaciones próximas.</p></div></section>
+      <section class="page" id="page-talento"><div class="placeholder"><h2>Talento &amp; Riesgo</h2><p>Modelo predictivo del Vigilante de Talento. Score de fuga por persona, factores explicativos, ranking por riesgo.</p></div></section>
+      <section class="page" id="page-reclutamiento"><div class="placeholder"><h2>Reclutamiento</h2><p>5 posiciones activas · 47 candidatos en proceso · agenda del Reclutador y cartas de descarte automáticas.</p></div></section>
+      <section class="page" id="page-clima"><div class="placeholder"><h2>Clima organizacional</h2><p>Pulso por área, mapa de calor de descontento, análisis de comentarios anónimos, indicadores NOM-035.</p></div></section>
+      <section class="page" id="page-reportes"><div class="placeholder"><h2>Reportes</h2><p>Generador a demanda en lenguaje natural. PDF, XLSX, dashboards programados por email.</p></div></section>
+      <section class="page" id="page-auditoria"><div class="placeholder"><h2>Auditoría</h2><p>Registro inmutable de cada acción tomada por cada agente. 7 años de retención. Listo para inspección STPS o LFPDPPP.</p></div></section>
+    </main>
   </div>
 </div>
 
-<div class="wrap">
+<button class="chat-fab" onclick="openChat()" title="Hablar con un agente">
+  <svg fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M21 12a8 8 0 11-3.5-6.6L21 4l-1 4a8 8 0 011 4z"/></svg>
+  <span class="dot"></span>
+</button>
 
-  <!-- HERO -->
-  <div class="hero">
-    <div class="hero-left">
-      <div class="eyebrow">Panel ejecutivo · martes 15 de mayo</div>
-      <h1>Lo que necesitas saber antes de tu primera junta</h1>
-      <p class="lede">El Director Virtual analizó la actividad de tus 9 agentes durante las últimas 24 horas y sintetizó las 3 prioridades del día. Todo lo demás está bajo control.</p>
+<aside class="chat-panel" id="chat-panel">
+  <div class="chat-head">
+    <div class="badge" id="chat-badge">07</div>
+    <div class="info">
+      <div class="name" id="chat-name">Director Virtual</div>
+      <div class="status">Disponible · Sintetiza los 8 agentes</div>
     </div>
-    <div class="hero-right">
-      <div class="briefing-title">
-        <h3>Briefing del día</h3>
-        <span class="pill pill-live">EN VIVO</span>
-      </div>
-
-      <div class="briefing-item">
-        <div class="bi-bullet" style="background:#FBE7E5;color:var(--coral)">1</div>
-        <div class="bi-body">
-          <div class="bi-head">M. Hernández (Ing. Procesos Sr.) está a punto de renunciar</div>
-          <div class="bi-meta">Vigilante de Talento detectó caída de productividad + 3 retardos + salario 18% bajo mercado. Recomendación: conversación de retención esta semana.</div>
-          <div class="bi-tag" style="margin-top:4px;color:var(--coral)">CRÍTICO · 03 Vigilante de Talento</div>
-        </div>
-      </div>
-
-      <div class="briefing-item">
-        <div class="bi-bullet" style="background:#FDF2E1;color:var(--amber)">2</div>
-        <div class="bi-body">
-          <div class="bi-head">NOM-035 Planta Tepeji vence en 14 días</div>
-          <div class="bi-meta">Sin la encuesta aplicada, multa STPS estimada $400,000 MXN. Guardián de Cumplimiento ya tiene el cuestionario listo para enviar.</div>
-          <div class="bi-tag" style="margin-top:4px;color:var(--amber)">URGENTE · 04 Guardián de Cumplimiento</div>
-        </div>
-      </div>
-
-      <div class="briefing-item">
-        <div class="bi-bullet" style="background:#FBE7E5;color:var(--coral)">3</div>
-        <div class="bi-body">
-          <div class="bi-head">Auditor de Nómina detectó 3 anomalías antes del pago</div>
-          <div class="bi-meta">Horas extra fuera de tope legal (2 personas), bono de antigüedad omitido (1 persona). Total impacto: $47,200 MXN. Revisar antes del jueves.</div>
-          <div class="bi-tag" style="margin-top:4px;color:var(--coral)">PRE-PAGO · 02 Auditor de Nómina</div>
-        </div>
-      </div>
-    </div>
+    <button class="close" onclick="closeChat()" aria-label="Cerrar">
+      <svg width="20" height="20" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M6 6l12 12M18 6L6 18"/></svg>
+    </button>
   </div>
-
-  <!-- KPIs -->
-  <div class="section">
-    <h2>Indicadores clave</h2>
-    <p class="lead">Datos en tiempo real cruzados desde nómina, checador biométrico y encuestas.</p>
-    <div class="kpis">
-      <div class="kpi"><div class="label">Plantilla activa</div><div class="value">427</div><div class="delta"><span class="delta-up">▲ 6</span> vs. mes anterior</div></div>
-      <div class="kpi"><div class="label">Ausentismo del mes</div><div class="value">3.4%</div><div class="delta"><span class="delta-down">▲ 0.7 pp</span> sobre objetivo</div></div>
-      <div class="kpi amber"><div class="label">Rotación 12m</div><div class="value">18.2%</div><div class="delta"><span class="delta-down">▲ 2.1 pp</span> sobre industria</div></div>
-      <div class="kpi"><div class="label">Horas extra (semana)</div><div class="value">1,284</div><div class="delta"><span class="delta-flat">▲ 4%</span> vs. promedio</div></div>
-      <div class="kpi"><div class="label">Costo de nómina</div><div class="value">$8.4M</div><div class="delta"><span class="delta-flat">en línea</span> con proyección</div></div>
-      <div class="kpi coral"><div class="label">NOM-035 (3 plantas)</div><div class="value">2/3</div><div class="delta"><span class="delta-down">Tepeji vence en 14 días</span></div></div>
-      <div class="kpi amber"><div class="label">Vencimientos &lt; 60 días</div><div class="value">23</div><div class="delta">Exámenes médicos, contratos, IMSS</div></div>
-      <div class="kpi emerald"><div class="label">Encuesta de clima</div><div class="value">7.8/10</div><div class="delta"><span class="delta-up">▲ 0.3</span> vs. trimestre anterior</div></div>
-    </div>
-
-    <div class="charts">
-      <div class="card">
-        <h3>Plantilla por planta</h3>
-        <div class="bar-row"><div class="lbl">Querétaro</div><div class="bar-track"><div class="bar-fill" style="width:78%"></div></div><div class="num">168</div></div>
-        <div class="bar-row"><div class="lbl">Tepeji</div><div class="bar-track"><div class="bar-fill" style="width:62%;background:var(--coral)"></div></div><div class="num">134</div></div>
-        <div class="bar-row"><div class="lbl">Monterrey</div><div class="bar-track"><div class="bar-fill" style="width:48%"></div></div><div class="num">104</div></div>
-        <div class="bar-row"><div class="lbl">Corporativo CDMX</div><div class="bar-track"><div class="bar-fill" style="width:10%"></div></div><div class="num">21</div></div>
-      </div>
-      <div class="card">
-        <h3>Composición</h3>
-        <div class="donut">
-          <svg viewBox="0 0 42 42" width="140" height="140">
-            <circle cx="21" cy="21" r="15.91" fill="transparent" stroke="#EAF3FB" stroke-width="6"/>
-            <circle cx="21" cy="21" r="15.91" fill="transparent" stroke="var(--favesco-deep)" stroke-width="6" stroke-dasharray="42 58" stroke-dashoffset="25"/>
-            <circle cx="21" cy="21" r="15.91" fill="transparent" stroke="var(--favesco-mid)" stroke-width="6" stroke-dasharray="34 66" stroke-dashoffset="-17"/>
-            <circle cx="21" cy="21" r="15.91" fill="transparent" stroke="var(--saffron)" stroke-width="6" stroke-dasharray="14 86" stroke-dashoffset="-51"/>
-            <circle cx="21" cy="21" r="15.91" fill="transparent" stroke="var(--emerald)" stroke-width="6" stroke-dasharray="10 90" stroke-dashoffset="-65"/>
-          </svg>
-          <div class="legend">
-            <div class="row"><span class="dot" style="background:var(--favesco-deep)"></span>Operación · 42%</div>
-            <div class="row"><span class="dot" style="background:var(--favesco-mid)"></span>Producción · 34%</div>
-            <div class="row"><span class="dot" style="background:var(--saffron)"></span>Administrativo · 14%</div>
-            <div class="row"><span class="dot" style="background:var(--emerald)"></span>Comercial · 10%</div>
-          </div>
-        </div>
-      </div>
-    </div>
+  <div class="agent-switcher" id="agent-switcher"></div>
+  <div class="api-hint">
+    Modo demo · pega tu Anthropic API key para respuestas en vivo:
+    <input id="api-key" type="password" placeholder="sk-ant-..." autocomplete="off" />
   </div>
-
-  <!-- Agents -->
-  <div class="section">
-    <h2>Equipo de agentes especializados</h2>
-    <p class="lead">9 agentes operando en español. Cada tarjeta abre el detalle de qué hace, con qué se conecta y qué decisiones puede tomar de forma autónoma.</p>
-    <div class="agents" id="agents-grid"></div>
+  <div class="chat-body" id="chat-body"></div>
+  <div class="suggestions" id="suggestions"></div>
+  <div class="chat-foot">
+    <input id="chat-input" placeholder="Escribe en español…" autocomplete="off" />
+    <button id="chat-send">Enviar</button>
   </div>
+</aside>
 
-  <!-- Chat -->
-  <div class="section">
-    <h2>Conversa con un agente</h2>
-    <p class="lead">Selecciona el agente con quien quieres hablar. En modo demo, las respuestas son guionadas. Si pegas una API key de Anthropic abajo, los agentes responderán con Claude en vivo.</p>
-    <div class="chat-wrap">
-      <div class="chat-side">
-        <h3>Agentes disponibles</h3>
-        <div id="agent-picker"></div>
-        <div class="api-config">
-          <label for="api-key">Anthropic API key (opcional)</label>
-          <input id="api-key" type="password" placeholder="sk-ant-..." autocomplete="off" />
-          <div class="hint">Si la pegas, los agentes responden en vivo con Claude. Se guarda solo en este navegador.</div>
-        </div>
-      </div>
-
-      <div class="chat">
-        <div class="chat-head">
-          <div class="agent-badge" id="chat-badge">07</div>
-          <div class="ch-info">
-            <div class="ch-name" id="chat-name">Director Virtual</div>
-            <div class="ch-status">Disponible</div>
-          </div>
-        </div>
-        <div class="chat-body" id="chat-body"></div>
-        <div class="suggestions" id="suggestions"></div>
-        <div class="chat-foot">
-          <input id="chat-input" placeholder="Escribe tu mensaje en español..." autocomplete="off" />
-          <button id="chat-send">Enviar</button>
-        </div>
-      </div>
-    </div>
-  </div>
-
-  <!-- Discovery -->
-  <div class="discovery">
-    <h2>Información que necesitamos del cliente</h2>
-    <p class="lead">Para arrancar la implementación necesitamos confirmar estos 9 puntos durante la junta de descubrimiento.</p>
-    <div class="disco-grid">
-      <div class="disco"><span class="d-num">01</span><div class="d-title">Software de nómina</div><div class="d-body">Sistema exacto (NomiPaq, Aspel NOI, Worky, SAP HR), versión, dónde corre y quién es el responsable.</div></div>
-      <div class="disco"><span class="d-num">02</span><div class="d-title">ERP del cliente</div><div class="d-body">Epicor, Microsip, Contpaq u otro. ¿Es la fuente de verdad de la plantilla?</div></div>
-      <div class="disco"><span class="d-num">03</span><div class="d-title">Reloj checador</div><div class="d-body">Marca y modelo (ZKTeco, Suprema, etc.) y qué expone más allá del CSV local.</div></div>
-      <div class="disco"><span class="d-num">04</span><div class="d-title">Plantilla y jornadas</div><div class="d-body">Total de personas, sitios y patrones de turno (complejidad de jornada).</div></div>
-      <div class="disco"><span class="d-num">05</span><div class="d-title">Cuenta WhatsApp Business</div><div class="d-body">¿Quién la posee y quién inicia la verificación de Meta? (toma 2-6 semanas).</div></div>
-      <div class="disco"><span class="d-num">06</span><div class="d-title">Residencia de datos</div><div class="d-body">¿Existe requisito por escrito de que los datos permanezcan en México?</div></div>
-      <div class="disco"><span class="d-num">07</span><div class="d-title">Quién aprueba qué</div><div class="d-body">Para cada agente: persona responsable y SLA de aprobación humana.</div></div>
-      <div class="disco"><span class="d-num">08</span><div class="d-title">Servidor del Connector</div><div class="d-body">¿Su área de TI provee la VM Linux on-premise? Responsable nombrado.</div></div>
-      <div class="disco"><span class="d-num">09</span><div class="d-title">Exportes de nómina + postura del proveedor</div><div class="d-body">Qué formato exporta hoy el contador. Postura del distribuidor sobre lectura directa del DB.</div></div>
-    </div>
-  </div>
-
-</div>
-
-<footer>
-  <span class="mark">FAVESCO</span> · Demo de Agentes de IA para RH · Construido para acompañar la junta de descubrimiento del 15 de mayo de 2026.
-</footer>
-
-<!-- Agent detail modal -->
 <div class="modal-back" id="modal">
   <div class="modal">
-    <span class="mclose" onclick="closeModal()">&times;</span>
-    <h3 id="modal-title">Agente</h3>
+    <div class="modal-head">
+      <h3 id="modal-title">Agente</h3>
+      <button class="x" onclick="closeModal()">&times;</button>
+    </div>
     <div class="modal-body" id="modal-body"></div>
   </div>
 </div>
 
 <script>
 const AGENTS = [
-  {
-    n: "01", name: "Asistente del Empleado", role: "Atención al personal",
+  { n: "01", name: "Asistente del Empleado", role: "Atención al personal", phase: "ACTIVO",
     desc: "Atiende al personal por WhatsApp y Telegram. Responde sobre vacaciones, aguinaldo, finiquito proyectado. Genera constancias y recibos al instante.",
-    conecta: "Nómina, IMSS, Drive",
+    conecta: "Nómina · IMSS · Drive",
     autonomia: "Genera documentos automáticamente · Consulta solo lectura sobre nómina",
-    proactivo: "Avisa proactivamente del aguinaldo, recordatorio de vacaciones por vencer, recibos disponibles."
-  },
-  {
-    n: "02", name: "Auditor de Nómina", role: "Detector de anomalías pre-pago",
+    proactivo: "Avisa proactivamente del aguinaldo, vacaciones por vencer y recibos disponibles.",
+    today: { events: 142, sla: "99.8%" } },
+  { n: "02", name: "Auditor de Nómina", role: "Detector de anomalías pre-pago", phase: "ACTIVO",
     desc: "Revisa cada nómina antes del pago. Detecta horas extra inconsistentes, deducciones erróneas, bonos olvidados y aumentos no aplicados.",
-    conecta: "Nómina, checador, base maestra de RH",
+    conecta: "Nómina · checador · base maestra RH",
     autonomia: "Solo recomienda · Nunca modifica la nómina",
-    proactivo: "24 horas antes del pago manda lista de hallazgos al director de RH con severidad P1/P2/P3."
-  },
-  {
-    n: "03", name: "Vigilante de Talento", role: "Predicción de fuga",
+    proactivo: "24h antes del pago manda lista de hallazgos con severidad P1/P2/P3 al director de RH.",
+    today: { events: 6, sla: "100%" } },
+  { n: "03", name: "Vigilante de Talento", role: "Predicción de fuga", phase: "FASE 2",
     desc: "Predice riesgo de renuncia cruzando productividad, asistencia, salario vs mercado y comentarios. Alerta antes de que el empleado clave se vaya.",
-    conecta: "Nómina, productividad, encuestas de clima",
-    autonomia: "Solo recomienda · Resultados llegan al director de RH, nunca directo a los gerentes",
-    proactivo: "Cada lunes manda lista priorizada de empleados con riesgo > 60% de renunciar en 90 días."
-  },
-  {
-    n: "04", name: "Guardián de Cumplimiento", role: "Vigilancia de obligaciones",
+    conecta: "Nómina · productividad · encuestas",
+    autonomia: "Solo recomienda · Los resultados llegan solo al director de RH",
+    proactivo: "Cada lunes manda lista priorizada de empleados con riesgo &gt;60% de renunciar en 90 días.",
+    today: { events: 12, sla: "—" } },
+  { n: "04", name: "Guardián de Cumplimiento", role: "Vigilancia de obligaciones", phase: "ACTIVO",
     desc: "Vigila vencimientos: exámenes médicos, contratos, NOM-035, IMSS, STPS. Previene multas avisando antes de la inspección o fecha límite.",
-    conecta: "Calendario STPS, IMSS, contratos, exámenes médicos",
-    autonomia: "Recomienda + recuerda automáticamente · No presenta trámites por sí mismo",
-    proactivo: "Alerta 60, 30 y 7 días antes de cada vencimiento. Escala a director si nadie acciona."
-  },
-  {
-    n: "05", name: "Reclutador", role: "Filtrado y agenda",
+    conecta: "Calendario STPS · IMSS · contratos",
+    autonomia: "Recomienda y recuerda automáticamente · No presenta trámites por sí mismo",
+    proactivo: "Alerta 60, 30 y 7 días antes de cada vencimiento. Escala a director si nadie acciona.",
+    today: { events: 23, sla: "99.5%" } },
+  { n: "05", name: "Reclutador", role: "Filtrado y agenda", phase: "FASE 3",
     desc: "Filtra CVs entrantes, califica candidatos contra el perfil, pre-entrevista por chat, agenda con calendario del gerente y manda cartas de descarte.",
-    conecta: "Bolsas de trabajo, calendario, correo",
-    autonomia: "Califica automáticamente · Mensajes al candidato requieren aprobación del reclutador (Fase 1)",
-    proactivo: "Manda resumen diario de candidatos con score alto y agenda de entrevistas para mañana."
-  },
-  {
-    n: "06", name: "Analista de Clima", role: "Pulso organizacional",
+    conecta: "Bolsas de trabajo · calendario · correo",
+    autonomia: "Califica automáticamente · Mensajes al candidato requieren aprobación del reclutador",
+    proactivo: "Resumen diario de candidatos top y agenda de entrevistas para mañana.",
+    today: { events: 47, sla: "—" } },
+  { n: "06", name: "Analista de Clima", role: "Pulso organizacional", phase: "FASE 3",
     desc: "Procesa encuestas, evaluaciones y comentarios. Identifica áreas con descontento, talento de alto potencial y factores que predicen rotación.",
-    conecta: "Encuestas, evaluaciones, comentarios anónimos",
+    conecta: "Encuestas · evaluaciones · comentarios",
     autonomia: "Solo recomienda · Reportes agregados, nunca identifica individuos",
-    proactivo: "Trimestralmente entrega mapa de calor por área + 3 acciones recomendadas."
-  },
-  {
-    n: "07", name: "Director Virtual", role: "Síntesis ejecutiva",
+    proactivo: "Trimestralmente entrega mapa de calor por área + 3 acciones recomendadas.",
+    today: { events: 0, sla: "—" } },
+  { n: "07", name: "Director Virtual", role: "Síntesis ejecutiva", phase: "ACTIVO",
     desc: "Sintetiza el output de los otros agentes. Manda briefing matutino al director de RH con las 3 cosas urgentes del día y métricas clave del mes.",
-    conecta: "Lee el stream de eventos de los otros 8 agentes",
-    autonomia: "Solo recomienda · Es la capa de síntesis, manda briefings",
-    proactivo: "7 AM diario manda el briefing por WhatsApp/email/dashboard. Responde preguntas ad-hoc del director."
-  },
-  {
-    n: "08", name: "Control de Jornadas", role: "Cumplimiento de la reforma laboral",
+    conecta: "Lee el stream de los otros 8 agentes",
+    autonomia: "Solo recomienda · Capa de síntesis ejecutiva",
+    proactivo: "7 AM diario manda el briefing por WhatsApp/email/dashboard. Responde ad-hoc.",
+    today: { events: 1, sla: "100%" } },
+  { n: "08", name: "Control de Jornadas", role: "Cumplimiento reforma laboral", phase: "ACTIVO",
     desc: "Monitorea acceso y horas trabajadas conforme a la nueva reforma laboral. Genera trazabilidad legal por persona para inspecciones y reclamaciones.",
     conecta: "Reloj checador biométrico",
     autonomia: "Registra automáticamente · Alerta al gerente cuando hay excepciones",
-    proactivo: "Detecta retardos repetidos (3+ en 2 semanas) y avisa al gerente para conversación con el colaborador."
-  },
-  {
-    n: "09", name: "Generador de Reportes", role: "Reportes ejecutivos a demanda",
+    proactivo: "Detecta retardos repetidos (3+ en 2 semanas) y avisa al gerente.",
+    today: { events: 1604, sla: "99.99%" } },
+  { n: "09", name: "Generador de Reportes", role: "Reportes ejecutivos a demanda", phase: "FASE 2",
     desc: "Crea dashboards, PDFs y reportes ejecutivos a demanda. Conecta a la información de todos los agentes y entrega en el formato solicitado.",
     conecta: "Lectura sobre todos los agentes",
     autonomia: "Solo actúa cuando un humano lo pide",
-    proactivo: "Por solicitud. Recuerda formatos preferidos del director."
-  },
+    proactivo: "Por solicitud. Recuerda formatos preferidos del director.",
+    today: { events: 12, sla: "100%" } },
 ];
 
-// Render agents
-const agentsGrid = document.getElementById("agents-grid");
-AGENTS.forEach((a, i) => {
-  const card = document.createElement("div");
-  card.className = "agent-card" + (i < 3 ? " active" : "");
-  card.innerHTML = `
-    <div class="num-strip">${a.n}</div>
-    <div class="ac-body">
-      <div class="ac-name">${a.name}</div>
-      <div class="ac-desc">${a.desc}</div>
-      <div class="ac-foot"><span class="pill ${i < 3 ? "pill-live" : "pill-warn"}">${i < 3 ? "ACTIVO" : "FASE 2"}</span></div>
+const phaseColors = { "ACTIVO": "pill-success", "FASE 2": "pill-info", "FASE 3": "pill-violet" };
+
+const agentGrid = document.getElementById("agent-grid");
+AGENTS.forEach(a => {
+  const tile = document.createElement("div");
+  tile.className = "agent-tile";
+  tile.innerHTML = `
+    <div class="at-top">
+      <div class="at-num">${a.n}</div>
+      <span class="pill ${phaseColors[a.phase]} no-dot">${a.phase}</span>
+    </div>
+    <h4 class="at-name">${a.name}</h4>
+    <div class="at-role">${a.role}</div>
+    <p class="at-desc">${a.desc}</p>
+    <div class="at-stats">
+      <div class="stat"><div class="v">${a.today.events.toLocaleString("es-MX")}</div>eventos hoy</div>
+      <div class="stat"><div class="v">${a.today.sla}</div>SLA</div>
+      <div class="stat"><div class="v">${a.conecta.split("·").length}</div>sistemas</div>
+    </div>
+    <div class="at-foot">
+      <span style="font-size: 11.5px; color: var(--muted);">Click para ver detalle</span>
+      <svg width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24" style="color: var(--muted);"><path d="M9 6l6 6-6 6"/></svg>
     </div>`;
-  card.onclick = () => openModal(a);
-  agentsGrid.appendChild(card);
+  tile.onclick = () => openModal(a);
+  agentGrid.appendChild(tile);
 });
 
-// Picker — only 4 chatable agents in this demo: 01, 02, 04, 07
-const CHATABLE = [AGENTS[6], AGENTS[0], AGENTS[1], AGENTS[3]]; // 07, 01, 02, 04
-const picker = document.getElementById("agent-picker");
-let currentAgent = CHATABLE[0];
-function renderPicker() {
-  picker.innerHTML = "";
-  CHATABLE.forEach(a => {
-    const el = document.createElement("div");
-    el.className = "agent-pick" + (a === currentAgent ? " selected" : "");
-    el.innerHTML = `
-      <div class="ap-num">${a.n}</div>
-      <div class="ap-info">
-        <div class="ap-name">${a.name}</div>
-        <div class="ap-role">${a.role}</div>
-      </div>`;
-    el.onclick = () => { currentAgent = a; renderPicker(); resetChat(); };
-    picker.appendChild(el);
-  });
-}
-renderPicker();
-
-// Modal
 function openModal(a) {
-  document.getElementById("modal-title").innerText = a.n + " · " + a.name;
+  document.getElementById("modal-title").textContent = `${a.n} · ${a.name}`;
   document.getElementById("modal-body").innerHTML = `
-    <div class="row"><strong>Qué hace:</strong> ${a.desc}</div>
-    <div class="row"><strong>Se conecta a:</strong> ${a.conecta}</div>
-    <div class="row"><strong>Nivel de autonomía:</strong> ${a.autonomia}</div>
-    <div class="row"><strong>Cómo es proactivo:</strong> ${a.proactivo}</div>`;
+    <div class="section"><h4>Función</h4><p>${a.desc}</p></div>
+    <div class="section"><h4>Detalles</h4>
+      <div class="kv">
+        <div class="k">Se conecta a</div><div class="v">${a.conecta}</div>
+        <div class="k">Autonomía</div><div class="v">${a.autonomia}</div>
+        <div class="k">Proactividad</div><div class="v">${a.proactivo}</div>
+        <div class="k">Eventos hoy</div><div class="v">${a.today.events.toLocaleString("es-MX")}</div>
+        <div class="k">SLA mensual</div><div class="v">${a.today.sla}</div>
+        <div class="k">Fase</div><div class="v">${a.phase}</div>
+      </div>
+    </div>`;
   document.getElementById("modal").classList.add("open");
 }
 function closeModal() { document.getElementById("modal").classList.remove("open"); }
 document.getElementById("modal").addEventListener("click", e => { if (e.target.id === "modal") closeModal(); });
 
-// Chat
+const pageTitles = {
+  "overview": "Resumen ejecutivo",
+  "bandeja": "Bandeja de hallazgos",
+  "personas": "Personas",
+  "nomina": "Nómina",
+  "jornadas": "Control de jornadas",
+  "cumplimiento": "Cumplimiento",
+  "talento": "Talento & Riesgo",
+  "reclutamiento": "Reclutamiento",
+  "clima": "Clima organizacional",
+  "agentes": "Equipo de agentes",
+  "reportes": "Reportes",
+  "auditoria": "Auditoría"
+};
+document.querySelectorAll(".nav-item").forEach(el => {
+  el.addEventListener("click", () => {
+    document.querySelectorAll(".nav-item").forEach(n => n.classList.remove("active"));
+    el.classList.add("active");
+    const page = el.dataset.page;
+    document.querySelectorAll(".page").forEach(p => p.classList.remove("active"));
+    document.getElementById("page-" + page).classList.add("active");
+    document.getElementById("crumb-page").textContent = pageTitles[page] || page;
+    document.querySelector(".content").scrollTop = 0;
+  });
+});
+
+Chart.defaults.font = { family: "Inter", size: 11 };
+Chart.defaults.color = "#64748B";
+Chart.defaults.borderColor = "#E5E7EB";
+
+function sparkline(id, data, color) {
+  const ctx = document.getElementById(id);
+  if (!ctx) return;
+  new Chart(ctx, {
+    type: "line",
+    data: { labels: data.map((_, i) => i), datasets: [{ data, borderColor: color, backgroundColor: color + "22", borderWidth: 1.5, fill: true, tension: .35, pointRadius: 0 }] },
+    options: { responsive: true, maintainAspectRatio: false, plugins: { legend: { display: false }, tooltip: { enabled: false } }, scales: { x: { display: false }, y: { display: false } }, animation: false }
+  });
+}
+sparkline("spark-headcount", [410,412,414,415,418,420,419,422,423,425,425,426,427,427], "#1E5A99");
+sparkline("spark-absent", [2.1,2.3,2.5,2.4,2.6,2.7,2.8,3.0,3.1,3.2,3.3,3.4,3.4,3.4], "#B45309");
+sparkline("spark-rotation", [16.1,16.4,16.8,17.0,17.3,17.4,17.6,17.8,17.9,18.0,18.0,18.1,18.1,18.2], "#B91C1C");
+sparkline("spark-cost", [7.9,8.0,8.1,8.0,8.2,8.1,8.2,8.3,8.3,8.3,8.4,8.4,8.4,8.42], "#1E5A99");
+sparkline("spark-enps", [28,30,31,33,34,36,37,38,40,40,41,41,42,42], "#15803D");
+sparkline("spark-nom", [82,82,82,82,80,78,76,74,72,71,69,68,67,67], "#B91C1C");
+sparkline("spark-overtime", [1100,1140,1180,1200,1190,1210,1220,1240,1250,1260,1270,1275,1280,1284], "#B45309");
+sparkline("spark-agents", [1300,1400,1450,1500,1480,1550,1600,1650,1700,1720,1780,1800,1830,1847], "#6D28D9");
+
+new Chart(document.getElementById("chart-headcount"), {
+  type: "bar",
+  data: {
+    labels: ["Querétaro", "Tepeji", "Monterrey", "CDMX"],
+    datasets: [
+      { label: "Operación", data: [78, 56, 38, 4], backgroundColor: "#0B1A2D", borderRadius: 4 },
+      { label: "Producción", data: [52, 60, 32, 0], backgroundColor: "#1E5A99", borderRadius: 4 },
+      { label: "Administrativo", data: [28, 14, 24, 13], backgroundColor: "#7B9FC8", borderRadius: 4 },
+      { label: "Comercial", data: [10, 4, 10, 4], backgroundColor: "#D4A04C", borderRadius: 4 }
+    ]
+  },
+  options: {
+    responsive: true, maintainAspectRatio: false,
+    plugins: { legend: { position: "bottom", labels: { boxWidth: 10, boxHeight: 10, padding: 14, usePointStyle: true, pointStyle: "rectRounded" } } },
+    scales: { x: { stacked: true, grid: { display: false } }, y: { stacked: true, grid: { color: "#F1F5F9" }, ticks: { stepSize: 50 } } }
+  }
+});
+
+new Chart(document.getElementById("chart-cost"), {
+  type: "line",
+  data: {
+    labels: ["Jun","Jul","Ago","Sep","Oct","Nov","Dic","Ene","Feb","Mar","Abr","May"],
+    datasets: [
+      { label: "Bruto", data: [7.4,7.5,7.6,7.7,7.8,8.6,8.0,8.1,8.2,8.3,8.35,8.42], borderColor: "#1E5A99", backgroundColor: "#1E5A9920", fill: true, tension: .35, pointRadius: 0, borderWidth: 2 },
+      { label: "Proyección", data: [7.4,7.5,7.6,7.7,7.8,8.6,8.0,8.1,8.2,8.3,8.4,8.5], borderColor: "#94A3B8", borderDash: [4,4], borderWidth: 1.5, fill: false, pointRadius: 0 }
+    ]
+  },
+  options: {
+    responsive: true, maintainAspectRatio: false,
+    plugins: { legend: { display: false } },
+    scales: { x: { grid: { display: false } }, y: { grid: { color: "#F1F5F9" }, ticks: { callback: v => "$" + v + "M" } } }
+  }
+});
+
+new Chart(document.getElementById("ring-compliance"), {
+  type: "doughnut",
+  data: { labels: ["Cumplido", "En proceso", "Por vencer"], datasets: [{ data: [67, 18, 15], backgroundColor: ["#15803D", "#B45309", "#B91C1C"], borderWidth: 0, hoverOffset: 4 }] },
+  options: { responsive: false, maintainAspectRatio: false, cutout: "72%", plugins: { legend: { display: false } } },
+  plugins: [{
+    id: "centerText",
+    beforeDraw(c) {
+      const { ctx, width, height } = c;
+      ctx.save();
+      ctx.font = "700 22px Inter";
+      ctx.fillStyle = "#0F172A";
+      ctx.textAlign = "center"; ctx.textBaseline = "middle";
+      ctx.fillText("67%", width/2, height/2 - 5);
+      ctx.font = "500 10px Inter";
+      ctx.fillStyle = "#64748B";
+      ctx.fillText("cumplimiento", width/2, height/2 + 14);
+      ctx.restore();
+    }
+  }]
+});
+
+const CHATABLE = [AGENTS[6], AGENTS[0], AGENTS[1], AGENTS[3]];
+let currentAgent = CHATABLE[0];
+
+const switcher = document.getElementById("agent-switcher");
+function renderSwitcher() {
+  switcher.innerHTML = "";
+  CHATABLE.forEach(a => {
+    const el = document.createElement("div");
+    el.className = "agent-chip" + (a === currentAgent ? " selected" : "");
+    el.innerHTML = `<span class="num">${a.n}</span> ${a.name}`;
+    el.onclick = () => { currentAgent = a; renderSwitcher(); resetChat(); };
+    switcher.appendChild(el);
+  });
+}
+
+const SUGGESTIONS = {
+  "07": ["¿Qué es lo más urgente hoy?", "Resumen del mes", "¿Por qué subió la rotación?", "Manda un reporte ejecutivo a mi correo"],
+  "01": ["¿Cuántos días de vacaciones tengo?", "Necesito una constancia laboral", "¿Cuánto será mi aguinaldo este año?", "Mi finiquito proyectado"],
+  "02": ["¿Qué encontraste en la nómina?", "Explícame la anomalía de horas extra", "¿Cuánto suman las anomalías?", "Genera el reporte para autorizar"],
+  "04": ["¿Qué vence en los próximos 60 días?", "Estado NOM-035 por planta", "Riesgo de multa STPS", "Manda recordatorios pendientes"]
+};
+
+const CANNED = {
+  "07": {
+    default: "Buenos días, Renato. Tu briefing de hoy:\n\n• M. Hernández (Ing. Procesos Sr.) en riesgo alto de renuncia (score 87/100).\n• NOM-035 Planta Tepeji vence en 14 días — multa estimada $400K MXN.\n• Auditor detectó 3 anomalías pre-pago ($47.2K MXN). Revisar antes del jueves.\n\n¿En cuál profundizamos?",
+    urgente: "La más urgente es NOM-035 en Tepeji por tener fecha legal. Si para el 29 de mayo no se aplica la encuesta a las 134 personas, STPS puede multar hasta $448,150 MXN. Guardián tiene la encuesta lista — falta tu autorización para enviar.",
+    mes: "Mes en curso:\n• Plantilla: 427 (+6 vs abril)\n• Ausentismo: 3.4% (+0.7pp sobre objetivo)\n• Rotación 12m: 18.2% (industria 16%)\n• Horas extra: 1,284/sem\n• Costo nómina: $8.42M MXN\n• eNPS: +42 (+6 vs Q1)\n\nLa rotación es el área de mayor presión, concentrada en Tepeji.",
+    rotacion: "Tres factores principales:\n1. Salarios 12-18% bajo mercado en Ingeniería de Procesos (Tepeji).\n2. Carga sostenida de horas extra en Producción (47 personas >10h/sem).\n3. Falta de plan de carrera en 31% de salidas voluntarias últimas 12 sem.\n\n¿Preparo propuesta de acción por cada uno?",
+    reporte: "Generando el reporte ejecutivo del mes en PDF: KPIs, hallazgos del Auditor, ranking del Vigilante, mapa de cumplimiento y briefing narrativo. ¿Te lo mando por correo o WhatsApp?"
+  },
+  "01": {
+    default: "¡Hola! Soy tu Asistente del Empleado. Te puedo ayudar con vacaciones, aguinaldo, constancias, recibos y finiquito proyectado. ¿En qué te ayudo?",
+    vacaciones: "Hola María 👋 Tienes 8 días disponibles + 2 días pendientes = 10 días en total.\nTu próximo período legal se acumula el 14 de junio (otros 12 días). ¿Quieres solicitar algunos?",
+    constancia: "Listo. Generé tu constancia laboral con antigüedad, puesto y salario actual. Te la mando por WhatsApp como PDF firmado. ¿La necesitas para algún propósito específico (banco, visa, escuela)?",
+    aguinaldo: "Tu aguinaldo proyectado 2026 es $28,450 MXN (15 días de salario conforme a LFT). Se paga antes del 20 de diciembre. El monto final lo confirma el Auditor de Nómina antes del pago.",
+    finiquito: "Tu finiquito proyectado al día de hoy (baja voluntaria) sería de ~$87,300 MXN:\n• Partes proporcionales: aguinaldo, vacaciones, prima vacacional\n• Salarios devengados\n\nEsta es una estimación, no constituye asesoría legal. Para un cálculo formal contacta a RH."
+  },
+  "02": {
+    default: "Soy el Auditor de Nómina. Esta quincena corrí 6 reglas sobre el borrador. Detecté 3 hallazgos. ¿Quieres verlos?",
+    encontraste: "3 hallazgos antes del pago del jueves:\n\n🔴 P1 — Horas extra fuera de tope legal\nJ. Ramírez (12 hrs) y A. López (14 hrs). Reforma laboral limita a 9 hrs/sem sin pago triple. Impacto $18,400.\n\n🟡 P2 — Bono de antigüedad omitido\nC. Méndez cumple 10 años el 18 de mayo. Bono de $25,000 MXN no aplicado.\n\n🟡 P3 — Variación de SBC\nN. García muestra SBC +8% sin ticket de cambio. Probable error de captura ($3,800).\n\nTotal impacto: $47,200 MXN",
+    horas: "Caso J. Ramírez:\n• L 8h, M 11h, X 11h, J 9h, V 8h, S 5h = 52 hrs (12 extra sobre 40).\n• Bajo reforma STPS, las horas extra sobre 9/sem se pagan triple. Esto no se aplicó.\n• Sugerencia: regularizar el pago triple o revisar carga con su gerente.",
+    suman: "Total: $47,200 MXN antes de impuestos\n• P1 Horas extra: $18,400\n• P2 Bono antigüedad: $25,000\n• P3 SBC variación: $3,800\n\n¿Autorizas que prepare el ajuste para el contador?",
+    reporte: "Generando reporte de hallazgos para autorización. Te llega por correo y WhatsApp con: tabla, evidencia adjunta, recomendación por hallazgo y bloque de firma para autorizar antes del pago del jueves."
+  },
+  "04": {
+    default: "Soy el Guardián de Cumplimiento. Tengo 23 vencimientos en los próximos 60 días. ¿Por dónde empezamos?",
+    vence: "Próximos 60 días, por urgencia:\n\n🔴 14 días — NOM-035 Planta Tepeji\n🔴 18 días — Examen médico choferes HazMat (3 personas)\n🟡 23 días — Renovación 5 contratos individuales\n🟡 31 días — Capacitación HSE auditores internos\n🟢 45 días — DC-3 capacitación (8 personas)\n🟢 52 días — Aviso patronal IMSS\n\n¿Profundizo en alguna?",
+    "nom-035": "Estado NOM-035:\n✅ Querétaro — Vigente hasta 2027-03-12\n✅ Monterrey — Vigente hasta 2026-11-08\n🔴 Tepeji — VENCE EN 14 DÍAS · encuesta lista pero no aplicada\n\nEstoy listo para mandar la encuesta a las 134 personas en cuanto autorices.",
+    multa: "Si no documentamos NOM-035 Tepeji al 29 de mayo, multa STPS de 250 a 5,000 UMAs ($28,285 a $565,700 MXN). Multa típica en empresas similares: ~$400K MXN.\nTiempo necesario para cumplir: 5 días hábiles. Aún estamos a tiempo.",
+    recordatorios: "Pendientes de enviar (requieren tu OK):\n• 134 encuestas NOM-035 Tepeji (WhatsApp + correo)\n• 3 citas examen HazMat (WhatsApp + calendario)\n• 5 cartas renovación contrato (correo a gerentes)\n• 8 inscripciones capacitación HSE\n\n¿Autorizo todo o uno por uno?"
+  }
+};
+
 const chatBody = document.getElementById("chat-body");
 const chatInput = document.getElementById("chat-input");
 const chatSend = document.getElementById("chat-send");
 const suggestionsEl = document.getElementById("suggestions");
 
-const SUGGESTIONS = {
-  "07": [
-    "¿Qué es lo más urgente hoy?",
-    "Resumen del mes",
-    "¿Por qué subió la rotación?",
-    "Manda un reporte ejecutivo a mi correo"
-  ],
-  "01": [
-    "¿Cuántos días de vacaciones tengo?",
-    "Necesito una constancia laboral",
-    "¿Cuánto será mi aguinaldo este año?",
-    "Mi finiquito proyectado"
-  ],
-  "02": [
-    "¿Qué encontraste en la nómina de esta quincena?",
-    "Explícame la anomalía de horas extra",
-    "¿Cuánto suman las anomalías detectadas?",
-    "Genera el reporte para autorizar"
-  ],
-  "04": [
-    "¿Qué vence en los próximos 60 días?",
-    "Estado de NOM-035 por planta",
-    "Riesgo de multa STPS",
-    "Manda recordatorios pendientes"
-  ]
-};
-
-const CANNED = {
-  "07": {
-    "default": "Hola Renato 👋 Hoy hay 3 prioridades:\n\n1. **M. Hernández** (Ing. Procesos Sr.) en riesgo alto de renuncia. Acción sugerida: conversación de retención esta semana.\n2. **NOM-035 Planta Tepeji** vence en 14 días — multa STPS estimada $400K MXN.\n3. **Auditor de Nómina** detectó 3 anomalías pre-pago ($47.2K MXN). Revisar antes del jueves.\n\n¿Quieres que profundice en alguna?",
-    "urgente": "La más urgente es **NOM-035 en Tepeji** porque tiene fecha legal definida. Si para el 29 de mayo no se aplica la encuesta y se documenta, STPS puede imponer multa de hasta $448,150 MXN. Guardián de Cumplimiento ya tiene la encuesta lista — solo necesita que autorices el envío.",
-    "mes": "Mes en curso:\n• Plantilla: 427 personas (+6 vs abril)\n• Ausentismo: 3.4% (+0.7pp sobre objetivo)\n• Rotación 12m: 18.2% (industria 16%)\n• Horas extra: 1,284 semanales\n• Costo de nómina: $8.4M MXN\n• Encuesta de clima: 7.8/10 (+0.3 vs Q1)\n\nLa rotación viene siendo el área de mayor presión, principalmente en Tepeji.",
-    "rotacion": "Vigilante de Talento identifica 3 factores principales:\n\n1. **Salarios 12-18% bajo mercado** en Ingeniería de Procesos (Tepeji).\n2. **Carga de horas extra** sostenida en Producción (>10h/semana en 47 personas).\n3. **Falta de plan de carrera** mencionada en 31% de las salidas voluntarias últimas 12 semanas.\n\n¿Quieres que prepare propuesta de acción para cada uno?",
-    "reporte": "Listo. Estoy preparando el reporte ejecutivo del mes en PDF con: KPIs principales, hallazgos del Auditor, lista priorizada del Vigilante, mapa de cumplimiento y briefing narrativo. ¿Te lo mando por correo o WhatsApp?"
-  },
-  "01": {
-    "default": "¡Hola! Soy tu Asistente del Empleado. Puedo ayudarte con:\n• Saldo de vacaciones y solicitudes\n• Aguinaldo y bonos\n• Constancias y recibos al instante\n• Finiquito proyectado\n\n¿En qué te ayudo?",
-    "vacaciones": "Hola María 👋 Tienes **8 días disponibles** + 2 días pendientes del año pasado = **10 días en total**.\n\nTu próximo período de vacaciones legales se acumula el 14 de junio (otros 12 días). ¿Quieres solicitar algunos días?",
-    "constancia": "Listo. Generé tu constancia laboral con tu antigüedad, puesto y salario. Te la mando ahora mismo por WhatsApp como PDF firmado. ¿Necesitas que indique algún propósito específico (banco, visa, escuela)?",
-    "aguinaldo": "Tu aguinaldo proyectado para 2026 es de **$28,450 MXN** (15 días de salario, conforme a la LFT). Se paga antes del 20 de diciembre. Considera que esto es una estimación — el monto final lo confirma el Auditor de Nómina antes del pago.",
-    "finiquito": "Tu finiquito proyectado al día de hoy (sin causa imputable a la empresa, baja voluntaria) sería de aproximadamente **$87,300 MXN** desglosado:\n• Partes proporcionales de aguinaldo, vacaciones y prima vacacional\n• Salarios devengados\n\nEsta es una **estimación**, no constituye asesoría legal. Para un cálculo formal contacta a RH."
-  },
-  "02": {
-    "default": "Soy el Auditor de Nómina. Esta quincena ya corrí 6 reglas de validación sobre la nómina borrador. ¿Quieres ver los hallazgos?",
-    "encontraste": "Encontré **3 hallazgos** antes del pago del jueves:\n\n🔴 **P1 — Horas extra fuera de tope legal**\nJ. Ramírez y A. López acumularon 12 y 14 horas extra respectivamente esta semana. La reforma laboral limita a 9 hrs/semana sin pago triple. Impacto: $18,400 MXN.\n\n🟡 **P2 — Bono de antigüedad omitido**\nC. Méndez cumple 10 años el 18 de mayo. El bono de $25,000 MXN no está aplicado en la nómina borrador.\n\n🟡 **P3 — Variación de SBC**\nN. García muestra SBC 8% mayor sin ticket de cambio salarial. Probable error de captura ($3,800 MXN).\n\n**Total impacto: $47,200 MXN**",
-    "horas": "Detalle del caso de J. Ramírez:\n• Lunes 8h, martes 11h, miércoles 11h, jueves 9h, viernes 8h, sábado 5h = **52 horas** (12 extra sobre las 40 base, antes de la reforma laboral 2025).\n• Bajo el nuevo reglamento STPS, todo lo arriba de 9 horas extra/semana debe pagarse al triple. Esto no está aplicado en el cálculo.\n• Sugerencia: regularizar el pago triple correspondiente o revisar la carga de trabajo con su gerente esta semana.",
-    "suman": "Total impacto monetario: **$47,200 MXN** distribuido así:\n• P1 Horas extra: $18,400\n• P2 Bono antigüedad omitido: $25,000\n• P3 SBC variación: $3,800\n\nTodo esto es **antes de impuestos**. ¿Autorizas que prepare el ajuste para que el contador lo aplique?",
-    "reporte": "Generando reporte de hallazgos para autorización... Listo. Te lo mando por correo y WhatsApp con: tabla de hallazgos, evidencia adjunta, recomendación por cada uno, y bloque de firma para que autorices el ajuste antes del pago del jueves."
-  },
-  "04": {
-    "default": "Soy el Guardián de Cumplimiento. Tengo identificados **23 vencimientos en los próximos 60 días**. ¿Quieres ver el resumen?",
-    "vence": "Próximos 60 días, ordenado por urgencia:\n\n🔴 **14 días** — NOM-035 Planta Tepeji (encuesta + plan de acción)\n🔴 **18 días** — Examen médico choferes HazMat (3 personas)\n🟡 **23 días** — Renovación de 5 contratos individuales (Producción)\n🟡 **31 días** — Capacitación HSE auditores internos\n🟢 **45 días** — DC-3 de capacitación (8 personas)\n🟢 **52 días** — Aviso patronal IMSS movimientos del bimestre\n\nTotal: 23 obligaciones. ¿Profundizo en alguna?",
-    "nom-035": "Estado NOM-035 por planta:\n\n✅ **Querétaro** — Vigente hasta 2027-03-12. Encuesta aplicada, plan de acción ejecutándose.\n✅ **Monterrey** — Vigente hasta 2026-11-08.\n🔴 **Tepeji** — **VENCE EN 14 DÍAS**. Encuesta lista pero no aplicada. Estoy listo para mandarla a las 134 personas en cuanto autorices.",
-    "multa": "Si para el 29 de mayo no documentamos NOM-035 en Tepeji, la multa STPS puede ir de 250 a 5,000 UMAs. Con UMA 2026 = $113.14 MXN, el rango es de **$28,285 a $565,700 MXN**.\n\nHistorial reciente de inspecciones a empresas similares en Hidalgo sugiere multa típica alrededor de **$400,000 MXN**.\n\nTiempo necesario para cumplir: 5 días hábiles (aplicar encuesta + procesar + documentar plan de acción). Aún estamos a tiempo.",
-    "recordatorios": "Recordatorios pendientes de enviar (con tu autorización):\n\n• 134 mensajes para encuesta NOM-035 Tepeji (vía WhatsApp + correo)\n• 3 citas para examen médico HazMat (vía WhatsApp + agenda en calendario médico)\n• 5 cartas para renovación de contrato (vía correo a gerentes)\n• 8 inscripciones a capacitación HSE (vía correo)\n\n¿Autorizo el envío de todo o quieres revisarlos uno por uno?"
-  }
-};
-
 function addMsg(text, from) {
   const div = document.createElement("div");
   div.className = "msg from-" + from;
-  div.innerHTML = `
-    <div class="stamp">${from === "user" ? "RH" : currentAgent.n}</div>
-    <div class="bubble"></div>`;
+  div.innerHTML = `<div class="av">${from === "user" ? "RH" : currentAgent.n}</div><div class="bubble"></div>`;
   div.querySelector(".bubble").textContent = text;
   chatBody.appendChild(div);
   chatBody.scrollTop = chatBody.scrollHeight;
   return div;
 }
-
 function addTyping() {
   const div = document.createElement("div");
-  div.className = "msg from-agent typing-msg";
-  div.innerHTML = `<div class="stamp">${currentAgent.n}</div><div class="bubble"><div class="typing"><div class="d"></div><div class="d"></div><div class="d"></div></div></div>`;
+  div.className = "msg from-agent";
+  div.innerHTML = `<div class="av">${currentAgent.n}</div><div class="bubble"><div class="typing"><div class="d"></div><div class="d"></div><div class="d"></div></div></div>`;
   chatBody.appendChild(div);
   chatBody.scrollTop = chatBody.scrollHeight;
   return div;
 }
-
 function pickCanned(agentN, text) {
-  const t = text.toLowerCase();
   const map = CANNED[agentN] || {};
-  const keys = Object.keys(map).filter(k => k !== "default");
-  for (const k of keys) {
-    if (t.includes(k)) return map[k];
+  const t = text.toLowerCase();
+  for (const k of Object.keys(map)) {
+    if (k !== "default" && t.includes(k)) return map[k];
   }
   return map.default;
 }
-
 async function respondLive(text) {
   const key = document.getElementById("api-key").value.trim();
   if (!key) return null;
   const systemPrompts = {
-    "07": "Eres el 'Director Virtual', un agente ejecutivo de IA para el departamento de RH de FAVESCO, una empresa industrial mexicana con 427 empleados en 3 plantas (Querétaro, Tepeji, Monterrey) + corporativo CDMX. Sintetizas la información de 8 agentes especialistas (Asistente del Empleado, Auditor de Nómina, Vigilante de Talento, Guardián de Cumplimiento, Reclutador, Analista de Clima, Control de Jornadas, Generador de Reportes). Hablas con Renato Hernández, Director de RH. Responde SIEMPRE en español mexicano formal pero cercano. Sé conciso (máximo 6 líneas si no piden detalle). Usa datos plausibles consistentes con lo siguiente: rotación 18.2%, ausentismo 3.4%, NOM-035 Tepeji vence en 14 días, M. Hernández en riesgo de fuga, Auditor detectó 3 anomalías pre-pago por $47,200 MXN. Si te preguntan algo fuera de tu alcance, dilo y sugiere qué agente sí puede.",
-    "01": "Eres el 'Asistente del Empleado' de FAVESCO. Atiendes empleados por WhatsApp/Telegram. Hablas en español mexicano cercano y útil. Solo respondes preguntas sobre: vacaciones, aguinaldo, finiquito proyectado, constancias, recibos, prestaciones. No das asesoría legal — cualquier cálculo es estimación. Si te piden algo fuera de tu alcance, sugiere contactar a RH. Sé conciso.",
-    "02": "Eres el 'Auditor de Nómina' de FAVESCO. Detectas anomalías en la nómina ANTES del pago. NO recalculas la nómina — solo identificas red flags. Reglas activas: horas extra fuera de tope legal, IMSS SBC fuera de rango, deducciones recurrentes faltantes, bonos/aguinaldo omitidos, variaciones de neto sobre 15%, IDs/cuentas duplicadas. Esta quincena detectaste 3 hallazgos: P1 horas extra ($18,400 MXN J. Ramírez y A. López), P2 bono antigüedad ($25,000 MXN C. Méndez), P3 variación SBC ($3,800 MXN N. García). Total $47,200 MXN. Responde en español mexicano técnico pero claro. Nunca recomiendas decisiones legales sin RH.",
-    "04": "Eres el 'Guardián de Cumplimiento' de FAVESCO. Vigilas obligaciones legales: NOM-035, IMSS, STPS, exámenes médicos, contratos, capacitación. Conoces la legislación mexicana laboral. Próximos 60 días tienes 23 vencimientos, el más crítico es NOM-035 Planta Tepeji que vence en 14 días (multa STPS estimada $400,000 MXN). Habla en español mexicano formal-técnico. Da fechas y montos específicos. No presentas trámites tú mismo — solo alertas y recomiendas."
+    "07": "Eres el 'Director Virtual' de FAVESCO (empresa industrial mexicana, 427 empleados, 3 plantas: Querétaro 168, Tepeji 134, Monterrey 104, + CDMX 21). Sintetizas la info de 8 agentes especialistas. Hablas con Renato Hernández, Director de RH. Responde en español mexicano formal-cercano, conciso (máx 6 líneas si no piden detalle). Datos consistentes: rotación 18.2%, ausentismo 3.4%, NOM-035 Tepeji 14 días, M. Hernández score fuga 87, Auditor detectó 3 anomalías pre-pago $47,200 MXN.",
+    "01": "Eres el 'Asistente del Empleado' de FAVESCO. Atiendes empleados por WhatsApp/Telegram en español mexicano cercano. Solo respondes sobre: vacaciones, aguinaldo, finiquito proyectado, constancias, recibos, prestaciones. Cualquier cálculo es estimación, no asesoría legal.",
+    "02": "Eres el 'Auditor de Nómina' de FAVESCO. Detectas anomalías ANTES del pago — no recalculas la nómina. Reglas: horas extra fuera de tope legal, IMSS SBC, deducciones faltantes, bonos omitidos, variación neto >15%, IDs duplicados. Esta quincena: 3 hallazgos (P1 horas extra $18,400, P2 bono antigüedad $25,000, P3 SBC $3,800). Total $47,200 MXN.",
+    "04": "Eres el 'Guardián de Cumplimiento' de FAVESCO. Vigilas NOM-035, IMSS, STPS, exámenes, contratos. Próximos 60 días: 23 vencimientos; el más crítico NOM-035 Tepeji (14 días, multa estimada $400K MXN). Español mexicano formal-técnico, fechas y montos específicos."
   };
   try {
     const r = await fetch("https://api.anthropic.com/v1/messages", {
       method: "POST",
-      headers: {
-        "content-type": "application/json",
-        "x-api-key": key,
-        "anthropic-version": "2023-06-01",
-        "anthropic-dangerous-direct-browser-access": "true"
-      },
-      body: JSON.stringify({
-        model: "claude-haiku-4-5",
-        max_tokens: 600,
-        system: systemPrompts[currentAgent.n] || systemPrompts["07"],
-        messages: [{ role: "user", content: text }]
-      })
+      headers: { "content-type": "application/json", "x-api-key": key, "anthropic-version": "2023-06-01", "anthropic-dangerous-direct-browser-access": "true" },
+      body: JSON.stringify({ model: "claude-haiku-4-5", max_tokens: 600, system: systemPrompts[currentAgent.n] || systemPrompts["07"], messages: [{ role: "user", content: text }] })
     });
-    if (!r.ok) {
-      const err = await r.text();
-      return "⚠️ Error de API (" + r.status + "). Revisa tu API key. Detalle: " + err.slice(0, 200);
-    }
+    if (!r.ok) { const err = await r.text(); return "⚠️ Error de API (" + r.status + "). " + err.slice(0, 200); }
     const data = await r.json();
     return data.content?.[0]?.text || "(respuesta vacía)";
-  } catch (e) {
-    return "⚠️ No pude conectar con la API de Claude: " + e.message;
-  }
+  } catch (e) { return "⚠️ No pude conectar con Claude: " + e.message; }
 }
-
 async function send(text) {
   if (!text.trim()) return;
   addMsg(text, "user");
@@ -778,33 +1171,27 @@ async function send(text) {
   const typing = addTyping();
   const useLive = document.getElementById("api-key").value.trim().length > 0;
   let reply;
-  if (useLive) {
-    reply = await respondLive(text);
-  } else {
-    await new Promise(r => setTimeout(r, 600 + Math.random() * 600));
-    reply = pickCanned(currentAgent.n, text);
-  }
+  if (useLive) { reply = await respondLive(text); }
+  else { await new Promise(r => setTimeout(r, 500 + Math.random() * 500)); reply = pickCanned(currentAgent.n, text); }
   typing.remove();
   addMsg(reply, "agent");
   chatSend.disabled = false;
   chatInput.focus();
 }
-
 function resetChat() {
   chatBody.innerHTML = "";
-  document.getElementById("chat-badge").innerText = currentAgent.n;
-  document.getElementById("chat-name").innerText = currentAgent.name;
+  document.getElementById("chat-badge").textContent = currentAgent.n;
+  document.getElementById("chat-name").textContent = currentAgent.name;
   const greetings = {
-    "07": "Buenos días, Renato. Soy el Director Virtual. Tu briefing de hoy ya está en la parte superior del panel. ¿Quieres que profundice en alguna de las 3 prioridades?",
-    "01": "¡Hola! Soy el Asistente del Empleado. Puedo ayudarte con vacaciones, aguinaldo, constancias, recibos y finiquito proyectado. ¿En qué te ayudo?",
-    "02": "Hola. Soy el Auditor de Nómina. Esta quincena identifiqué 3 anomalías antes del pago. ¿Quieres ver los hallazgos?",
-    "04": "Hola. Soy el Guardián de Cumplimiento. Tengo 23 vencimientos en los próximos 60 días, el más urgente es NOM-035 Tepeji (14 días). ¿Por dónde empezamos?"
+    "07": "Buenos días, Renato. Tu briefing está listo. ¿Quieres que profundice en alguna de las 3 prioridades del día?",
+    "01": "¡Hola! Soy el Asistente del Empleado. ¿En qué te ayudo?",
+    "02": "Hola. Esta quincena identifiqué 3 anomalías antes del pago. ¿Quieres ver los hallazgos?",
+    "04": "Hola. Tengo 23 vencimientos en los próximos 60 días, el más urgente NOM-035 Tepeji (14 días). ¿Por dónde empezamos?"
   };
   addMsg(greetings[currentAgent.n] || greetings["07"], "agent");
-  renderSuggestions();
+  renderSugs();
 }
-
-function renderSuggestions() {
+function renderSugs() {
   suggestionsEl.innerHTML = "";
   (SUGGESTIONS[currentAgent.n] || []).forEach(s => {
     const c = document.createElement("div");
@@ -814,11 +1201,22 @@ function renderSuggestions() {
     suggestionsEl.appendChild(c);
   });
 }
-
 chatSend.onclick = () => send(chatInput.value);
 chatInput.addEventListener("keydown", e => { if (e.key === "Enter") send(chatInput.value); });
 
+function openChat() { document.getElementById("chat-panel").classList.add("open"); chatInput.focus(); }
+function closeChat() { document.getElementById("chat-panel").classList.remove("open"); }
+
+renderSwitcher();
 resetChat();
+
+document.addEventListener("keydown", e => {
+  if ((e.metaKey || e.ctrlKey) && e.key.toLowerCase() === "k") {
+    e.preventDefault();
+    document.querySelector(".search input").focus();
+  }
+  if (e.key === "Escape") { closeChat(); closeModal(); }
+});
 </script>
 </body>
 </html>
