@@ -1,0 +1,824 @@
+<!doctype html>
+<html lang="es">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>FAVESCO · Agentes de IA para Recursos Humanos — Demo</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,400;9..144,500;9..144,600;9..144,700&family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --favesco-deep: #0B3D6B;
+    --favesco-blue: #1E5A99;
+    --favesco-mid: #3E7CB1;
+    --favesco-soft: #B7D4EC;
+    --favesco-mist: #EAF3FB;
+    --amber: #B7791F;
+    --coral: #C0392B;
+    --emerald: #1E8E4A;
+    --violet: #6B46C1;
+    --saffron: #D4A04C;
+    --ink: #0F1B2D;
+    --graphite: #2D3748;
+    --slate: #4A5568;
+    --silver: #A0AEC0;
+    --pearl: #E2E8F0;
+    --bone: #F7FAFC;
+    --paper: #FFFFFF;
+    --cream: #FDFCF8;
+    --warm-bg: #FAF8F3;
+    --font-display: 'Fraunces', Georgia, serif;
+    --font-body: 'Plus Jakarta Sans', system-ui, -apple-system, sans-serif;
+    --font-mono: 'JetBrains Mono', 'SF Mono', Menlo, monospace;
+    --shadow-subtle: 0 1px 2px rgba(15,27,45,.04);
+    --shadow-soft: 0 4px 12px rgba(15,27,45,.06);
+    --shadow-lift: 0 12px 32px rgba(15,27,45,.10);
+    --radius: 14px;
+  }
+  * { box-sizing: border-box; }
+  html, body { margin: 0; padding: 0; }
+  body {
+    font-family: var(--font-body);
+    color: var(--ink);
+    background: var(--warm-bg);
+    line-height: 1.55;
+    -webkit-font-smoothing: antialiased;
+  }
+  .wrap { max-width: 1440px; margin: 0 auto; padding: 32px clamp(20px, 4vw, 56px); }
+
+  /* Top bar */
+  .topbar {
+    display: flex; align-items: center; justify-content: space-between;
+    padding: 18px clamp(20px, 4vw, 56px);
+    background: var(--favesco-deep);
+    color: white;
+    border-bottom: 1px solid rgba(255,255,255,.08);
+  }
+  .brand { display: flex; align-items: center; gap: 14px; }
+  .brand-mark {
+    width: 38px; height: 38px; border-radius: 8px;
+    background: linear-gradient(135deg, var(--favesco-mid), var(--favesco-soft));
+    display: grid; place-items: center;
+    font-family: var(--font-display); font-weight: 700; color: var(--favesco-deep); font-size: 20px;
+  }
+  .brand-text { display: flex; flex-direction: column; line-height: 1.15; }
+  .brand-text .name { font-family: var(--font-display); font-weight: 700; font-size: 18px; letter-spacing: .2px; }
+  .brand-text .sub { font-size: 11px; opacity: .75; letter-spacing: .8px; text-transform: uppercase; }
+  .topbar-right { display: flex; align-items: center; gap: 20px; font-size: 13px; }
+  .topbar-right .who { display: flex; flex-direction: column; align-items: flex-end; line-height: 1.2; }
+  .topbar-right .who .name { font-weight: 600; }
+  .topbar-right .who .role { font-size: 11px; opacity: .7; }
+  .avatar {
+    width: 36px; height: 36px; border-radius: 50%;
+    background: var(--favesco-soft); color: var(--favesco-deep);
+    display: grid; place-items: center; font-weight: 700; font-size: 13px;
+  }
+
+  /* Hero / briefing */
+  .hero { display: grid; grid-template-columns: 1.4fr 1fr; gap: 28px; margin-top: 8px; }
+  @media (max-width: 980px) { .hero { grid-template-columns: 1fr; } }
+  .hero-left h1 {
+    font-family: var(--font-display); font-weight: 600;
+    font-size: clamp(28px, 3.4vw, 44px); line-height: 1.1;
+    margin: 4px 0 8px; letter-spacing: -.5px;
+  }
+  .hero-left .eyebrow {
+    font-size: 11px; letter-spacing: 1.4px; text-transform: uppercase;
+    color: var(--favesco-blue); font-weight: 700;
+  }
+  .hero-left .lede { color: var(--slate); font-size: 16px; max-width: 60ch; }
+  .hero-right {
+    background: var(--paper); border-radius: var(--radius); padding: 22px;
+    box-shadow: var(--shadow-soft); border: 1px solid var(--pearl);
+  }
+  .briefing-title { display: flex; align-items: center; gap: 10px; margin-bottom: 14px; }
+  .briefing-title h3 { margin: 0; font-family: var(--font-display); font-weight: 600; font-size: 17px; }
+  .pill {
+    font-size: 10px; letter-spacing: .8px; text-transform: uppercase; font-weight: 700;
+    padding: 3px 8px; border-radius: 999px;
+  }
+  .pill-live { background: #E8F5EE; color: var(--emerald); }
+  .pill-warn { background: #FDF2E1; color: var(--amber); }
+  .pill-crit { background: #FBE7E5; color: var(--coral); }
+  .briefing-item {
+    display: flex; gap: 12px; padding: 12px 0;
+    border-top: 1px solid var(--pearl);
+  }
+  .briefing-item:first-of-type { border-top: 0; padding-top: 0; }
+  .bi-bullet {
+    width: 26px; height: 26px; border-radius: 50%; flex-shrink: 0;
+    display: grid; place-items: center; font-weight: 700; font-size: 12px;
+    background: var(--favesco-mist); color: var(--favesco-deep);
+  }
+  .bi-body { flex: 1; }
+  .bi-body .bi-head { font-weight: 600; font-size: 14px; }
+  .bi-body .bi-meta { color: var(--slate); font-size: 12.5px; margin-top: 2px; }
+  .bi-tag { font-size: 10px; letter-spacing: .6px; text-transform: uppercase; color: var(--slate); }
+
+  /* Section heading */
+  .section { margin-top: 44px; }
+  .section h2 {
+    font-family: var(--font-display); font-weight: 600;
+    font-size: 24px; margin: 0 0 6px;
+  }
+  .section .lead { color: var(--slate); font-size: 14px; margin: 0 0 18px; }
+
+  /* KPI grid */
+  .kpis { display: grid; grid-template-columns: repeat(4, 1fr); gap: 16px; }
+  @media (max-width: 980px) { .kpis { grid-template-columns: repeat(2, 1fr); } }
+  @media (max-width: 540px) { .kpis { grid-template-columns: 1fr; } }
+  .kpi {
+    background: var(--paper); border: 1px solid var(--pearl);
+    border-radius: var(--radius); padding: 18px;
+    box-shadow: var(--shadow-subtle);
+    position: relative; overflow: hidden;
+  }
+  .kpi::before {
+    content: ""; position: absolute; left: 0; top: 0; bottom: 0; width: 3px;
+    background: var(--favesco-blue);
+  }
+  .kpi.amber::before { background: var(--amber); }
+  .kpi.coral::before { background: var(--coral); }
+  .kpi.emerald::before { background: var(--emerald); }
+  .kpi .label { font-size: 11.5px; color: var(--slate); letter-spacing: .4px; text-transform: uppercase; font-weight: 600; }
+  .kpi .value {
+    font-family: var(--font-display); font-weight: 600;
+    font-size: 30px; margin: 6px 0 2px; letter-spacing: -.5px;
+  }
+  .kpi .delta { font-size: 12.5px; color: var(--slate); display: flex; align-items: center; gap: 6px; }
+  .delta-up { color: var(--emerald); font-weight: 600; }
+  .delta-down { color: var(--coral); font-weight: 600; }
+  .delta-flat { color: var(--slate); font-weight: 600; }
+
+  /* Chart placeholders */
+  .charts { display: grid; grid-template-columns: 1.4fr 1fr; gap: 16px; margin-top: 16px; }
+  @media (max-width: 980px) { .charts { grid-template-columns: 1fr; } }
+  .card {
+    background: var(--paper); border: 1px solid var(--pearl);
+    border-radius: var(--radius); padding: 20px;
+    box-shadow: var(--shadow-subtle);
+  }
+  .card h3 {
+    font-family: var(--font-display); font-weight: 600;
+    font-size: 16px; margin: 0 0 12px;
+  }
+  .bar-row { display: grid; grid-template-columns: 130px 1fr 56px; gap: 12px; align-items: center; padding: 6px 0; }
+  .bar-row .lbl { font-size: 13px; color: var(--graphite); }
+  .bar-track { height: 8px; background: var(--favesco-mist); border-radius: 999px; overflow: hidden; }
+  .bar-fill { height: 100%; background: var(--favesco-blue); border-radius: 999px; }
+  .bar-row .num { font-family: var(--font-mono); font-size: 12.5px; color: var(--slate); text-align: right; }
+
+  .donut {
+    display: flex; gap: 18px; align-items: center;
+  }
+  .donut svg { flex-shrink: 0; }
+  .legend { font-size: 13px; display: flex; flex-direction: column; gap: 8px; }
+  .legend .row { display: flex; align-items: center; gap: 8px; }
+  .legend .dot { width: 10px; height: 10px; border-radius: 50%; }
+
+  /* Agents grid */
+  .agents {
+    display: grid; grid-template-columns: repeat(3, 1fr); gap: 14px;
+  }
+  @media (max-width: 980px) { .agents { grid-template-columns: repeat(2, 1fr); } }
+  @media (max-width: 600px) { .agents { grid-template-columns: 1fr; } }
+  .agent-card {
+    background: var(--paper); border: 1px solid var(--pearl);
+    border-radius: var(--radius); padding: 0;
+    box-shadow: var(--shadow-subtle);
+    display: flex; min-height: 150px; overflow: hidden;
+    cursor: pointer; transition: box-shadow .15s, transform .15s;
+  }
+  .agent-card:hover { box-shadow: var(--shadow-lift); transform: translateY(-1px); }
+  .agent-card .num-strip {
+    width: 64px; background: var(--favesco-deep); color: white;
+    display: grid; place-items: center;
+    font-family: var(--font-display); font-weight: 700; font-size: 28px;
+  }
+  .agent-card.active .num-strip { background: var(--emerald); }
+  .agent-card .ac-body { padding: 14px 16px; flex: 1; }
+  .agent-card .ac-name { font-weight: 700; font-size: 14.5px; margin: 0 0 4px; }
+  .agent-card .ac-desc { font-size: 12.5px; color: var(--slate); line-height: 1.45; }
+  .agent-card .ac-foot { margin-top: 8px; display: flex; gap: 8px; align-items: center; }
+
+  /* Chat */
+  .chat-wrap { display: grid; grid-template-columns: 1fr 1.4fr; gap: 18px; margin-top: 16px; }
+  @media (max-width: 980px) { .chat-wrap { grid-template-columns: 1fr; } }
+  .chat-side {
+    background: var(--paper); border: 1px solid var(--pearl); border-radius: var(--radius);
+    padding: 18px; box-shadow: var(--shadow-subtle);
+  }
+  .chat-side h3 { font-family: var(--font-display); font-weight: 600; font-size: 16px; margin: 0 0 12px; }
+  .agent-pick {
+    padding: 10px 12px; border-radius: 10px; margin-bottom: 8px; cursor: pointer;
+    border: 1px solid var(--pearl); background: var(--bone);
+    display: flex; gap: 10px; align-items: center;
+  }
+  .agent-pick.selected { border-color: var(--favesco-blue); background: var(--favesco-mist); }
+  .agent-pick .ap-num {
+    width: 30px; height: 30px; border-radius: 8px;
+    background: var(--favesco-deep); color: white;
+    display: grid; place-items: center; font-weight: 700; font-size: 13px;
+  }
+  .agent-pick .ap-info { flex: 1; }
+  .agent-pick .ap-info .ap-name { font-weight: 600; font-size: 13.5px; }
+  .agent-pick .ap-info .ap-role { font-size: 11.5px; color: var(--slate); }
+  .api-config { margin-top: 14px; padding-top: 14px; border-top: 1px solid var(--pearl); }
+  .api-config label { font-size: 12px; color: var(--slate); display: block; margin-bottom: 6px; font-weight: 600; }
+  .api-config input {
+    width: 100%; padding: 8px 10px; border: 1px solid var(--pearl); border-radius: 8px;
+    font-family: var(--font-mono); font-size: 12px;
+  }
+  .api-config .hint { font-size: 11px; color: var(--slate); margin-top: 6px; }
+
+  .chat {
+    background: var(--paper); border: 1px solid var(--pearl); border-radius: var(--radius);
+    box-shadow: var(--shadow-soft); display: flex; flex-direction: column; min-height: 540px;
+  }
+  .chat-head {
+    padding: 14px 18px; border-bottom: 1px solid var(--pearl);
+    display: flex; align-items: center; gap: 12px;
+  }
+  .chat-head .agent-badge {
+    width: 36px; height: 36px; border-radius: 8px; background: var(--favesco-deep); color: white;
+    display: grid; place-items: center; font-weight: 700;
+  }
+  .chat-head .ch-info .ch-name { font-weight: 700; font-size: 14.5px; }
+  .chat-head .ch-info .ch-status { font-size: 11.5px; color: var(--emerald); display: flex; align-items: center; gap: 6px; }
+  .chat-head .ch-info .ch-status::before {
+    content: ""; width: 7px; height: 7px; background: var(--emerald); border-radius: 50%;
+  }
+  .chat-body {
+    flex: 1; padding: 18px; overflow-y: auto; display: flex; flex-direction: column; gap: 12px;
+    background: linear-gradient(180deg, var(--cream), var(--paper));
+    max-height: 60vh;
+  }
+  .msg { display: flex; gap: 10px; max-width: 80%; }
+  .msg.from-agent { align-self: flex-start; }
+  .msg.from-user { align-self: flex-end; flex-direction: row-reverse; }
+  .msg .bubble {
+    padding: 10px 14px; border-radius: 14px; font-size: 14px; line-height: 1.5;
+    box-shadow: var(--shadow-subtle);
+    white-space: pre-wrap; word-wrap: break-word;
+  }
+  .msg.from-agent .bubble { background: var(--paper); border: 1px solid var(--pearl); border-bottom-left-radius: 4px; }
+  .msg.from-user .bubble { background: var(--favesco-deep); color: white; border-bottom-right-radius: 4px; }
+  .msg .stamp {
+    width: 28px; height: 28px; border-radius: 50%; flex-shrink: 0;
+    display: grid; place-items: center; font-size: 11px; font-weight: 700;
+  }
+  .msg.from-agent .stamp { background: var(--favesco-mist); color: var(--favesco-deep); }
+  .msg.from-user .stamp { background: var(--favesco-soft); color: var(--favesco-deep); }
+  .chat-foot {
+    padding: 12px; border-top: 1px solid var(--pearl); display: flex; gap: 8px;
+    background: var(--paper);
+  }
+  .chat-foot input {
+    flex: 1; padding: 11px 14px; border: 1px solid var(--pearl); border-radius: 10px;
+    font-family: var(--font-body); font-size: 14px;
+  }
+  .chat-foot input:focus { outline: 2px solid var(--favesco-soft); border-color: var(--favesco-blue); }
+  .chat-foot button {
+    padding: 10px 18px; border: 0; border-radius: 10px; background: var(--favesco-deep);
+    color: white; font-weight: 600; cursor: pointer; font-family: var(--font-body); font-size: 14px;
+  }
+  .chat-foot button:hover { background: var(--favesco-blue); }
+  .chat-foot button:disabled { opacity: .5; cursor: not-allowed; }
+  .suggestions { display: flex; flex-wrap: wrap; gap: 8px; padding: 0 18px 12px; }
+  .suggestions .chip {
+    border: 1px solid var(--pearl); background: var(--bone);
+    padding: 7px 12px; border-radius: 999px; font-size: 12.5px; cursor: pointer;
+    color: var(--graphite);
+  }
+  .suggestions .chip:hover { border-color: var(--favesco-blue); color: var(--favesco-deep); }
+
+  /* Discovery section */
+  .discovery {
+    background: var(--favesco-deep); color: white; border-radius: var(--radius);
+    padding: 28px clamp(20px, 3vw, 36px); margin-top: 28px;
+  }
+  .discovery h2 { font-family: var(--font-display); font-weight: 600; font-size: 22px; margin: 0 0 6px; color: white; }
+  .discovery .lead { color: var(--favesco-soft); margin: 0 0 20px; font-size: 14px; }
+  .disco-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 14px; }
+  @media (max-width: 980px) { .disco-grid { grid-template-columns: repeat(2, 1fr); } }
+  @media (max-width: 540px) { .disco-grid { grid-template-columns: 1fr; } }
+  .disco {
+    background: rgba(255,255,255,.06); border: 1px solid rgba(255,255,255,.10);
+    border-radius: 10px; padding: 14px;
+  }
+  .disco .d-num {
+    display: inline-block; font-family: var(--font-mono); font-size: 11px;
+    background: var(--favesco-soft); color: var(--favesco-deep);
+    padding: 2px 7px; border-radius: 4px; font-weight: 700; margin-bottom: 8px;
+  }
+  .disco .d-title { font-weight: 700; font-size: 14px; margin-bottom: 4px; }
+  .disco .d-body { font-size: 12.5px; color: var(--favesco-soft); line-height: 1.5; }
+
+  /* Footer */
+  footer { color: var(--slate); font-size: 12.5px; text-align: center; padding: 32px; }
+  footer .mark { color: var(--favesco-deep); font-weight: 600; }
+
+  /* Modal */
+  .modal-back {
+    display: none; position: fixed; inset: 0; background: rgba(15,27,45,.55);
+    align-items: center; justify-content: center; z-index: 100; padding: 20px;
+  }
+  .modal-back.open { display: flex; }
+  .modal {
+    background: var(--paper); border-radius: var(--radius); max-width: 560px; width: 100%;
+    padding: 26px; box-shadow: var(--shadow-lift);
+  }
+  .modal h3 { font-family: var(--font-display); font-weight: 600; font-size: 20px; margin: 0 0 6px; }
+  .modal .mclose { float: right; cursor: pointer; color: var(--slate); font-size: 22px; line-height: 1; }
+  .modal-body { font-size: 14px; color: var(--graphite); line-height: 1.55; }
+  .modal-body .row { margin: 10px 0; }
+  .modal-body .row strong { color: var(--favesco-deep); }
+
+  /* Typing indicator */
+  .typing { display: flex; gap: 4px; padding: 8px 0; }
+  .typing .d { width: 7px; height: 7px; background: var(--silver); border-radius: 50%; animation: bounce 1.2s infinite; }
+  .typing .d:nth-child(2) { animation-delay: .15s; }
+  .typing .d:nth-child(3) { animation-delay: .3s; }
+  @keyframes bounce { 0%, 60%, 100% { opacity: .3; transform: translateY(0); } 30% { opacity: 1; transform: translateY(-4px); } }
+</style>
+</head>
+<body>
+
+<div class="topbar">
+  <div class="brand">
+    <div class="brand-mark">F</div>
+    <div class="brand-text">
+      <span class="name">FAVESCO</span>
+      <span class="sub">Inteligencia Artificial · Recursos Humanos</span>
+    </div>
+  </div>
+  <div class="topbar-right">
+    <div class="who">
+      <span class="name">Renato Hernández</span>
+      <span class="role">Director de RH</span>
+    </div>
+    <div class="avatar">RH</div>
+  </div>
+</div>
+
+<div class="wrap">
+
+  <!-- HERO -->
+  <div class="hero">
+    <div class="hero-left">
+      <div class="eyebrow">Panel ejecutivo · martes 15 de mayo</div>
+      <h1>Lo que necesitas saber antes de tu primera junta</h1>
+      <p class="lede">El Director Virtual analizó la actividad de tus 9 agentes durante las últimas 24 horas y sintetizó las 3 prioridades del día. Todo lo demás está bajo control.</p>
+    </div>
+    <div class="hero-right">
+      <div class="briefing-title">
+        <h3>Briefing del día</h3>
+        <span class="pill pill-live">EN VIVO</span>
+      </div>
+
+      <div class="briefing-item">
+        <div class="bi-bullet" style="background:#FBE7E5;color:var(--coral)">1</div>
+        <div class="bi-body">
+          <div class="bi-head">M. Hernández (Ing. Procesos Sr.) está a punto de renunciar</div>
+          <div class="bi-meta">Vigilante de Talento detectó caída de productividad + 3 retardos + salario 18% bajo mercado. Recomendación: conversación de retención esta semana.</div>
+          <div class="bi-tag" style="margin-top:4px;color:var(--coral)">CRÍTICO · 03 Vigilante de Talento</div>
+        </div>
+      </div>
+
+      <div class="briefing-item">
+        <div class="bi-bullet" style="background:#FDF2E1;color:var(--amber)">2</div>
+        <div class="bi-body">
+          <div class="bi-head">NOM-035 Planta Tepeji vence en 14 días</div>
+          <div class="bi-meta">Sin la encuesta aplicada, multa STPS estimada $400,000 MXN. Guardián de Cumplimiento ya tiene el cuestionario listo para enviar.</div>
+          <div class="bi-tag" style="margin-top:4px;color:var(--amber)">URGENTE · 04 Guardián de Cumplimiento</div>
+        </div>
+      </div>
+
+      <div class="briefing-item">
+        <div class="bi-bullet" style="background:#FBE7E5;color:var(--coral)">3</div>
+        <div class="bi-body">
+          <div class="bi-head">Auditor de Nómina detectó 3 anomalías antes del pago</div>
+          <div class="bi-meta">Horas extra fuera de tope legal (2 personas), bono de antigüedad omitido (1 persona). Total impacto: $47,200 MXN. Revisar antes del jueves.</div>
+          <div class="bi-tag" style="margin-top:4px;color:var(--coral)">PRE-PAGO · 02 Auditor de Nómina</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- KPIs -->
+  <div class="section">
+    <h2>Indicadores clave</h2>
+    <p class="lead">Datos en tiempo real cruzados desde nómina, checador biométrico y encuestas.</p>
+    <div class="kpis">
+      <div class="kpi"><div class="label">Plantilla activa</div><div class="value">427</div><div class="delta"><span class="delta-up">▲ 6</span> vs. mes anterior</div></div>
+      <div class="kpi"><div class="label">Ausentismo del mes</div><div class="value">3.4%</div><div class="delta"><span class="delta-down">▲ 0.7 pp</span> sobre objetivo</div></div>
+      <div class="kpi amber"><div class="label">Rotación 12m</div><div class="value">18.2%</div><div class="delta"><span class="delta-down">▲ 2.1 pp</span> sobre industria</div></div>
+      <div class="kpi"><div class="label">Horas extra (semana)</div><div class="value">1,284</div><div class="delta"><span class="delta-flat">▲ 4%</span> vs. promedio</div></div>
+      <div class="kpi"><div class="label">Costo de nómina</div><div class="value">$8.4M</div><div class="delta"><span class="delta-flat">en línea</span> con proyección</div></div>
+      <div class="kpi coral"><div class="label">NOM-035 (3 plantas)</div><div class="value">2/3</div><div class="delta"><span class="delta-down">Tepeji vence en 14 días</span></div></div>
+      <div class="kpi amber"><div class="label">Vencimientos &lt; 60 días</div><div class="value">23</div><div class="delta">Exámenes médicos, contratos, IMSS</div></div>
+      <div class="kpi emerald"><div class="label">Encuesta de clima</div><div class="value">7.8/10</div><div class="delta"><span class="delta-up">▲ 0.3</span> vs. trimestre anterior</div></div>
+    </div>
+
+    <div class="charts">
+      <div class="card">
+        <h3>Plantilla por planta</h3>
+        <div class="bar-row"><div class="lbl">Querétaro</div><div class="bar-track"><div class="bar-fill" style="width:78%"></div></div><div class="num">168</div></div>
+        <div class="bar-row"><div class="lbl">Tepeji</div><div class="bar-track"><div class="bar-fill" style="width:62%;background:var(--coral)"></div></div><div class="num">134</div></div>
+        <div class="bar-row"><div class="lbl">Monterrey</div><div class="bar-track"><div class="bar-fill" style="width:48%"></div></div><div class="num">104</div></div>
+        <div class="bar-row"><div class="lbl">Corporativo CDMX</div><div class="bar-track"><div class="bar-fill" style="width:10%"></div></div><div class="num">21</div></div>
+      </div>
+      <div class="card">
+        <h3>Composición</h3>
+        <div class="donut">
+          <svg viewBox="0 0 42 42" width="140" height="140">
+            <circle cx="21" cy="21" r="15.91" fill="transparent" stroke="#EAF3FB" stroke-width="6"/>
+            <circle cx="21" cy="21" r="15.91" fill="transparent" stroke="var(--favesco-deep)" stroke-width="6" stroke-dasharray="42 58" stroke-dashoffset="25"/>
+            <circle cx="21" cy="21" r="15.91" fill="transparent" stroke="var(--favesco-mid)" stroke-width="6" stroke-dasharray="34 66" stroke-dashoffset="-17"/>
+            <circle cx="21" cy="21" r="15.91" fill="transparent" stroke="var(--saffron)" stroke-width="6" stroke-dasharray="14 86" stroke-dashoffset="-51"/>
+            <circle cx="21" cy="21" r="15.91" fill="transparent" stroke="var(--emerald)" stroke-width="6" stroke-dasharray="10 90" stroke-dashoffset="-65"/>
+          </svg>
+          <div class="legend">
+            <div class="row"><span class="dot" style="background:var(--favesco-deep)"></span>Operación · 42%</div>
+            <div class="row"><span class="dot" style="background:var(--favesco-mid)"></span>Producción · 34%</div>
+            <div class="row"><span class="dot" style="background:var(--saffron)"></span>Administrativo · 14%</div>
+            <div class="row"><span class="dot" style="background:var(--emerald)"></span>Comercial · 10%</div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Agents -->
+  <div class="section">
+    <h2>Equipo de agentes especializados</h2>
+    <p class="lead">9 agentes operando en español. Cada tarjeta abre el detalle de qué hace, con qué se conecta y qué decisiones puede tomar de forma autónoma.</p>
+    <div class="agents" id="agents-grid"></div>
+  </div>
+
+  <!-- Chat -->
+  <div class="section">
+    <h2>Conversa con un agente</h2>
+    <p class="lead">Selecciona el agente con quien quieres hablar. En modo demo, las respuestas son guionadas. Si pegas una API key de Anthropic abajo, los agentes responderán con Claude en vivo.</p>
+    <div class="chat-wrap">
+      <div class="chat-side">
+        <h3>Agentes disponibles</h3>
+        <div id="agent-picker"></div>
+        <div class="api-config">
+          <label for="api-key">Anthropic API key (opcional)</label>
+          <input id="api-key" type="password" placeholder="sk-ant-..." autocomplete="off" />
+          <div class="hint">Si la pegas, los agentes responden en vivo con Claude. Se guarda solo en este navegador.</div>
+        </div>
+      </div>
+
+      <div class="chat">
+        <div class="chat-head">
+          <div class="agent-badge" id="chat-badge">07</div>
+          <div class="ch-info">
+            <div class="ch-name" id="chat-name">Director Virtual</div>
+            <div class="ch-status">Disponible</div>
+          </div>
+        </div>
+        <div class="chat-body" id="chat-body"></div>
+        <div class="suggestions" id="suggestions"></div>
+        <div class="chat-foot">
+          <input id="chat-input" placeholder="Escribe tu mensaje en español..." autocomplete="off" />
+          <button id="chat-send">Enviar</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Discovery -->
+  <div class="discovery">
+    <h2>Información que necesitamos del cliente</h2>
+    <p class="lead">Para arrancar la implementación necesitamos confirmar estos 9 puntos durante la junta de descubrimiento.</p>
+    <div class="disco-grid">
+      <div class="disco"><span class="d-num">01</span><div class="d-title">Software de nómina</div><div class="d-body">Sistema exacto (NomiPaq, Aspel NOI, Worky, SAP HR), versión, dónde corre y quién es el responsable.</div></div>
+      <div class="disco"><span class="d-num">02</span><div class="d-title">ERP del cliente</div><div class="d-body">Epicor, Microsip, Contpaq u otro. ¿Es la fuente de verdad de la plantilla?</div></div>
+      <div class="disco"><span class="d-num">03</span><div class="d-title">Reloj checador</div><div class="d-body">Marca y modelo (ZKTeco, Suprema, etc.) y qué expone más allá del CSV local.</div></div>
+      <div class="disco"><span class="d-num">04</span><div class="d-title">Plantilla y jornadas</div><div class="d-body">Total de personas, sitios y patrones de turno (complejidad de jornada).</div></div>
+      <div class="disco"><span class="d-num">05</span><div class="d-title">Cuenta WhatsApp Business</div><div class="d-body">¿Quién la posee y quién inicia la verificación de Meta? (toma 2-6 semanas).</div></div>
+      <div class="disco"><span class="d-num">06</span><div class="d-title">Residencia de datos</div><div class="d-body">¿Existe requisito por escrito de que los datos permanezcan en México?</div></div>
+      <div class="disco"><span class="d-num">07</span><div class="d-title">Quién aprueba qué</div><div class="d-body">Para cada agente: persona responsable y SLA de aprobación humana.</div></div>
+      <div class="disco"><span class="d-num">08</span><div class="d-title">Servidor del Connector</div><div class="d-body">¿Su área de TI provee la VM Linux on-premise? Responsable nombrado.</div></div>
+      <div class="disco"><span class="d-num">09</span><div class="d-title">Exportes de nómina + postura del proveedor</div><div class="d-body">Qué formato exporta hoy el contador. Postura del distribuidor sobre lectura directa del DB.</div></div>
+    </div>
+  </div>
+
+</div>
+
+<footer>
+  <span class="mark">FAVESCO</span> · Demo de Agentes de IA para RH · Construido para acompañar la junta de descubrimiento del 15 de mayo de 2026.
+</footer>
+
+<!-- Agent detail modal -->
+<div class="modal-back" id="modal">
+  <div class="modal">
+    <span class="mclose" onclick="closeModal()">&times;</span>
+    <h3 id="modal-title">Agente</h3>
+    <div class="modal-body" id="modal-body"></div>
+  </div>
+</div>
+
+<script>
+const AGENTS = [
+  {
+    n: "01", name: "Asistente del Empleado", role: "Atención al personal",
+    desc: "Atiende al personal por WhatsApp y Telegram. Responde sobre vacaciones, aguinaldo, finiquito proyectado. Genera constancias y recibos al instante.",
+    conecta: "Nómina, IMSS, Drive",
+    autonomia: "Genera documentos automáticamente · Consulta solo lectura sobre nómina",
+    proactivo: "Avisa proactivamente del aguinaldo, recordatorio de vacaciones por vencer, recibos disponibles."
+  },
+  {
+    n: "02", name: "Auditor de Nómina", role: "Detector de anomalías pre-pago",
+    desc: "Revisa cada nómina antes del pago. Detecta horas extra inconsistentes, deducciones erróneas, bonos olvidados y aumentos no aplicados.",
+    conecta: "Nómina, checador, base maestra de RH",
+    autonomia: "Solo recomienda · Nunca modifica la nómina",
+    proactivo: "24 horas antes del pago manda lista de hallazgos al director de RH con severidad P1/P2/P3."
+  },
+  {
+    n: "03", name: "Vigilante de Talento", role: "Predicción de fuga",
+    desc: "Predice riesgo de renuncia cruzando productividad, asistencia, salario vs mercado y comentarios. Alerta antes de que el empleado clave se vaya.",
+    conecta: "Nómina, productividad, encuestas de clima",
+    autonomia: "Solo recomienda · Resultados llegan al director de RH, nunca directo a los gerentes",
+    proactivo: "Cada lunes manda lista priorizada de empleados con riesgo > 60% de renunciar en 90 días."
+  },
+  {
+    n: "04", name: "Guardián de Cumplimiento", role: "Vigilancia de obligaciones",
+    desc: "Vigila vencimientos: exámenes médicos, contratos, NOM-035, IMSS, STPS. Previene multas avisando antes de la inspección o fecha límite.",
+    conecta: "Calendario STPS, IMSS, contratos, exámenes médicos",
+    autonomia: "Recomienda + recuerda automáticamente · No presenta trámites por sí mismo",
+    proactivo: "Alerta 60, 30 y 7 días antes de cada vencimiento. Escala a director si nadie acciona."
+  },
+  {
+    n: "05", name: "Reclutador", role: "Filtrado y agenda",
+    desc: "Filtra CVs entrantes, califica candidatos contra el perfil, pre-entrevista por chat, agenda con calendario del gerente y manda cartas de descarte.",
+    conecta: "Bolsas de trabajo, calendario, correo",
+    autonomia: "Califica automáticamente · Mensajes al candidato requieren aprobación del reclutador (Fase 1)",
+    proactivo: "Manda resumen diario de candidatos con score alto y agenda de entrevistas para mañana."
+  },
+  {
+    n: "06", name: "Analista de Clima", role: "Pulso organizacional",
+    desc: "Procesa encuestas, evaluaciones y comentarios. Identifica áreas con descontento, talento de alto potencial y factores que predicen rotación.",
+    conecta: "Encuestas, evaluaciones, comentarios anónimos",
+    autonomia: "Solo recomienda · Reportes agregados, nunca identifica individuos",
+    proactivo: "Trimestralmente entrega mapa de calor por área + 3 acciones recomendadas."
+  },
+  {
+    n: "07", name: "Director Virtual", role: "Síntesis ejecutiva",
+    desc: "Sintetiza el output de los otros agentes. Manda briefing matutino al director de RH con las 3 cosas urgentes del día y métricas clave del mes.",
+    conecta: "Lee el stream de eventos de los otros 8 agentes",
+    autonomia: "Solo recomienda · Es la capa de síntesis, manda briefings",
+    proactivo: "7 AM diario manda el briefing por WhatsApp/email/dashboard. Responde preguntas ad-hoc del director."
+  },
+  {
+    n: "08", name: "Control de Jornadas", role: "Cumplimiento de la reforma laboral",
+    desc: "Monitorea acceso y horas trabajadas conforme a la nueva reforma laboral. Genera trazabilidad legal por persona para inspecciones y reclamaciones.",
+    conecta: "Reloj checador biométrico",
+    autonomia: "Registra automáticamente · Alerta al gerente cuando hay excepciones",
+    proactivo: "Detecta retardos repetidos (3+ en 2 semanas) y avisa al gerente para conversación con el colaborador."
+  },
+  {
+    n: "09", name: "Generador de Reportes", role: "Reportes ejecutivos a demanda",
+    desc: "Crea dashboards, PDFs y reportes ejecutivos a demanda. Conecta a la información de todos los agentes y entrega en el formato solicitado.",
+    conecta: "Lectura sobre todos los agentes",
+    autonomia: "Solo actúa cuando un humano lo pide",
+    proactivo: "Por solicitud. Recuerda formatos preferidos del director."
+  },
+];
+
+// Render agents
+const agentsGrid = document.getElementById("agents-grid");
+AGENTS.forEach((a, i) => {
+  const card = document.createElement("div");
+  card.className = "agent-card" + (i < 3 ? " active" : "");
+  card.innerHTML = `
+    <div class="num-strip">${a.n}</div>
+    <div class="ac-body">
+      <div class="ac-name">${a.name}</div>
+      <div class="ac-desc">${a.desc}</div>
+      <div class="ac-foot"><span class="pill ${i < 3 ? "pill-live" : "pill-warn"}">${i < 3 ? "ACTIVO" : "FASE 2"}</span></div>
+    </div>`;
+  card.onclick = () => openModal(a);
+  agentsGrid.appendChild(card);
+});
+
+// Picker — only 4 chatable agents in this demo: 01, 02, 04, 07
+const CHATABLE = [AGENTS[6], AGENTS[0], AGENTS[1], AGENTS[3]]; // 07, 01, 02, 04
+const picker = document.getElementById("agent-picker");
+let currentAgent = CHATABLE[0];
+function renderPicker() {
+  picker.innerHTML = "";
+  CHATABLE.forEach(a => {
+    const el = document.createElement("div");
+    el.className = "agent-pick" + (a === currentAgent ? " selected" : "");
+    el.innerHTML = `
+      <div class="ap-num">${a.n}</div>
+      <div class="ap-info">
+        <div class="ap-name">${a.name}</div>
+        <div class="ap-role">${a.role}</div>
+      </div>`;
+    el.onclick = () => { currentAgent = a; renderPicker(); resetChat(); };
+    picker.appendChild(el);
+  });
+}
+renderPicker();
+
+// Modal
+function openModal(a) {
+  document.getElementById("modal-title").innerText = a.n + " · " + a.name;
+  document.getElementById("modal-body").innerHTML = `
+    <div class="row"><strong>Qué hace:</strong> ${a.desc}</div>
+    <div class="row"><strong>Se conecta a:</strong> ${a.conecta}</div>
+    <div class="row"><strong>Nivel de autonomía:</strong> ${a.autonomia}</div>
+    <div class="row"><strong>Cómo es proactivo:</strong> ${a.proactivo}</div>`;
+  document.getElementById("modal").classList.add("open");
+}
+function closeModal() { document.getElementById("modal").classList.remove("open"); }
+document.getElementById("modal").addEventListener("click", e => { if (e.target.id === "modal") closeModal(); });
+
+// Chat
+const chatBody = document.getElementById("chat-body");
+const chatInput = document.getElementById("chat-input");
+const chatSend = document.getElementById("chat-send");
+const suggestionsEl = document.getElementById("suggestions");
+
+const SUGGESTIONS = {
+  "07": [
+    "¿Qué es lo más urgente hoy?",
+    "Resumen del mes",
+    "¿Por qué subió la rotación?",
+    "Manda un reporte ejecutivo a mi correo"
+  ],
+  "01": [
+    "¿Cuántos días de vacaciones tengo?",
+    "Necesito una constancia laboral",
+    "¿Cuánto será mi aguinaldo este año?",
+    "Mi finiquito proyectado"
+  ],
+  "02": [
+    "¿Qué encontraste en la nómina de esta quincena?",
+    "Explícame la anomalía de horas extra",
+    "¿Cuánto suman las anomalías detectadas?",
+    "Genera el reporte para autorizar"
+  ],
+  "04": [
+    "¿Qué vence en los próximos 60 días?",
+    "Estado de NOM-035 por planta",
+    "Riesgo de multa STPS",
+    "Manda recordatorios pendientes"
+  ]
+};
+
+const CANNED = {
+  "07": {
+    "default": "Hola Renato 👋 Hoy hay 3 prioridades:\n\n1. **M. Hernández** (Ing. Procesos Sr.) en riesgo alto de renuncia. Acción sugerida: conversación de retención esta semana.\n2. **NOM-035 Planta Tepeji** vence en 14 días — multa STPS estimada $400K MXN.\n3. **Auditor de Nómina** detectó 3 anomalías pre-pago ($47.2K MXN). Revisar antes del jueves.\n\n¿Quieres que profundice en alguna?",
+    "urgente": "La más urgente es **NOM-035 en Tepeji** porque tiene fecha legal definida. Si para el 29 de mayo no se aplica la encuesta y se documenta, STPS puede imponer multa de hasta $448,150 MXN. Guardián de Cumplimiento ya tiene la encuesta lista — solo necesita que autorices el envío.",
+    "mes": "Mes en curso:\n• Plantilla: 427 personas (+6 vs abril)\n• Ausentismo: 3.4% (+0.7pp sobre objetivo)\n• Rotación 12m: 18.2% (industria 16%)\n• Horas extra: 1,284 semanales\n• Costo de nómina: $8.4M MXN\n• Encuesta de clima: 7.8/10 (+0.3 vs Q1)\n\nLa rotación viene siendo el área de mayor presión, principalmente en Tepeji.",
+    "rotacion": "Vigilante de Talento identifica 3 factores principales:\n\n1. **Salarios 12-18% bajo mercado** en Ingeniería de Procesos (Tepeji).\n2. **Carga de horas extra** sostenida en Producción (>10h/semana en 47 personas).\n3. **Falta de plan de carrera** mencionada en 31% de las salidas voluntarias últimas 12 semanas.\n\n¿Quieres que prepare propuesta de acción para cada uno?",
+    "reporte": "Listo. Estoy preparando el reporte ejecutivo del mes en PDF con: KPIs principales, hallazgos del Auditor, lista priorizada del Vigilante, mapa de cumplimiento y briefing narrativo. ¿Te lo mando por correo o WhatsApp?"
+  },
+  "01": {
+    "default": "¡Hola! Soy tu Asistente del Empleado. Puedo ayudarte con:\n• Saldo de vacaciones y solicitudes\n• Aguinaldo y bonos\n• Constancias y recibos al instante\n• Finiquito proyectado\n\n¿En qué te ayudo?",
+    "vacaciones": "Hola María 👋 Tienes **8 días disponibles** + 2 días pendientes del año pasado = **10 días en total**.\n\nTu próximo período de vacaciones legales se acumula el 14 de junio (otros 12 días). ¿Quieres solicitar algunos días?",
+    "constancia": "Listo. Generé tu constancia laboral con tu antigüedad, puesto y salario. Te la mando ahora mismo por WhatsApp como PDF firmado. ¿Necesitas que indique algún propósito específico (banco, visa, escuela)?",
+    "aguinaldo": "Tu aguinaldo proyectado para 2026 es de **$28,450 MXN** (15 días de salario, conforme a la LFT). Se paga antes del 20 de diciembre. Considera que esto es una estimación — el monto final lo confirma el Auditor de Nómina antes del pago.",
+    "finiquito": "Tu finiquito proyectado al día de hoy (sin causa imputable a la empresa, baja voluntaria) sería de aproximadamente **$87,300 MXN** desglosado:\n• Partes proporcionales de aguinaldo, vacaciones y prima vacacional\n• Salarios devengados\n\nEsta es una **estimación**, no constituye asesoría legal. Para un cálculo formal contacta a RH."
+  },
+  "02": {
+    "default": "Soy el Auditor de Nómina. Esta quincena ya corrí 6 reglas de validación sobre la nómina borrador. ¿Quieres ver los hallazgos?",
+    "encontraste": "Encontré **3 hallazgos** antes del pago del jueves:\n\n🔴 **P1 — Horas extra fuera de tope legal**\nJ. Ramírez y A. López acumularon 12 y 14 horas extra respectivamente esta semana. La reforma laboral limita a 9 hrs/semana sin pago triple. Impacto: $18,400 MXN.\n\n🟡 **P2 — Bono de antigüedad omitido**\nC. Méndez cumple 10 años el 18 de mayo. El bono de $25,000 MXN no está aplicado en la nómina borrador.\n\n🟡 **P3 — Variación de SBC**\nN. García muestra SBC 8% mayor sin ticket de cambio salarial. Probable error de captura ($3,800 MXN).\n\n**Total impacto: $47,200 MXN**",
+    "horas": "Detalle del caso de J. Ramírez:\n• Lunes 8h, martes 11h, miércoles 11h, jueves 9h, viernes 8h, sábado 5h = **52 horas** (12 extra sobre las 40 base, antes de la reforma laboral 2025).\n• Bajo el nuevo reglamento STPS, todo lo arriba de 9 horas extra/semana debe pagarse al triple. Esto no está aplicado en el cálculo.\n• Sugerencia: regularizar el pago triple correspondiente o revisar la carga de trabajo con su gerente esta semana.",
+    "suman": "Total impacto monetario: **$47,200 MXN** distribuido así:\n• P1 Horas extra: $18,400\n• P2 Bono antigüedad omitido: $25,000\n• P3 SBC variación: $3,800\n\nTodo esto es **antes de impuestos**. ¿Autorizas que prepare el ajuste para que el contador lo aplique?",
+    "reporte": "Generando reporte de hallazgos para autorización... Listo. Te lo mando por correo y WhatsApp con: tabla de hallazgos, evidencia adjunta, recomendación por cada uno, y bloque de firma para que autorices el ajuste antes del pago del jueves."
+  },
+  "04": {
+    "default": "Soy el Guardián de Cumplimiento. Tengo identificados **23 vencimientos en los próximos 60 días**. ¿Quieres ver el resumen?",
+    "vence": "Próximos 60 días, ordenado por urgencia:\n\n🔴 **14 días** — NOM-035 Planta Tepeji (encuesta + plan de acción)\n🔴 **18 días** — Examen médico choferes HazMat (3 personas)\n🟡 **23 días** — Renovación de 5 contratos individuales (Producción)\n🟡 **31 días** — Capacitación HSE auditores internos\n🟢 **45 días** — DC-3 de capacitación (8 personas)\n🟢 **52 días** — Aviso patronal IMSS movimientos del bimestre\n\nTotal: 23 obligaciones. ¿Profundizo en alguna?",
+    "nom-035": "Estado NOM-035 por planta:\n\n✅ **Querétaro** — Vigente hasta 2027-03-12. Encuesta aplicada, plan de acción ejecutándose.\n✅ **Monterrey** — Vigente hasta 2026-11-08.\n🔴 **Tepeji** — **VENCE EN 14 DÍAS**. Encuesta lista pero no aplicada. Estoy listo para mandarla a las 134 personas en cuanto autorices.",
+    "multa": "Si para el 29 de mayo no documentamos NOM-035 en Tepeji, la multa STPS puede ir de 250 a 5,000 UMAs. Con UMA 2026 = $113.14 MXN, el rango es de **$28,285 a $565,700 MXN**.\n\nHistorial reciente de inspecciones a empresas similares en Hidalgo sugiere multa típica alrededor de **$400,000 MXN**.\n\nTiempo necesario para cumplir: 5 días hábiles (aplicar encuesta + procesar + documentar plan de acción). Aún estamos a tiempo.",
+    "recordatorios": "Recordatorios pendientes de enviar (con tu autorización):\n\n• 134 mensajes para encuesta NOM-035 Tepeji (vía WhatsApp + correo)\n• 3 citas para examen médico HazMat (vía WhatsApp + agenda en calendario médico)\n• 5 cartas para renovación de contrato (vía correo a gerentes)\n• 8 inscripciones a capacitación HSE (vía correo)\n\n¿Autorizo el envío de todo o quieres revisarlos uno por uno?"
+  }
+};
+
+function addMsg(text, from) {
+  const div = document.createElement("div");
+  div.className = "msg from-" + from;
+  div.innerHTML = `
+    <div class="stamp">${from === "user" ? "RH" : currentAgent.n}</div>
+    <div class="bubble"></div>`;
+  div.querySelector(".bubble").textContent = text;
+  chatBody.appendChild(div);
+  chatBody.scrollTop = chatBody.scrollHeight;
+  return div;
+}
+
+function addTyping() {
+  const div = document.createElement("div");
+  div.className = "msg from-agent typing-msg";
+  div.innerHTML = `<div class="stamp">${currentAgent.n}</div><div class="bubble"><div class="typing"><div class="d"></div><div class="d"></div><div class="d"></div></div></div>`;
+  chatBody.appendChild(div);
+  chatBody.scrollTop = chatBody.scrollHeight;
+  return div;
+}
+
+function pickCanned(agentN, text) {
+  const t = text.toLowerCase();
+  const map = CANNED[agentN] || {};
+  const keys = Object.keys(map).filter(k => k !== "default");
+  for (const k of keys) {
+    if (t.includes(k)) return map[k];
+  }
+  return map.default;
+}
+
+async function respondLive(text) {
+  const key = document.getElementById("api-key").value.trim();
+  if (!key) return null;
+  const systemPrompts = {
+    "07": "Eres el 'Director Virtual', un agente ejecutivo de IA para el departamento de RH de FAVESCO, una empresa industrial mexicana con 427 empleados en 3 plantas (Querétaro, Tepeji, Monterrey) + corporativo CDMX. Sintetizas la información de 8 agentes especialistas (Asistente del Empleado, Auditor de Nómina, Vigilante de Talento, Guardián de Cumplimiento, Reclutador, Analista de Clima, Control de Jornadas, Generador de Reportes). Hablas con Renato Hernández, Director de RH. Responde SIEMPRE en español mexicano formal pero cercano. Sé conciso (máximo 6 líneas si no piden detalle). Usa datos plausibles consistentes con lo siguiente: rotación 18.2%, ausentismo 3.4%, NOM-035 Tepeji vence en 14 días, M. Hernández en riesgo de fuga, Auditor detectó 3 anomalías pre-pago por $47,200 MXN. Si te preguntan algo fuera de tu alcance, dilo y sugiere qué agente sí puede.",
+    "01": "Eres el 'Asistente del Empleado' de FAVESCO. Atiendes empleados por WhatsApp/Telegram. Hablas en español mexicano cercano y útil. Solo respondes preguntas sobre: vacaciones, aguinaldo, finiquito proyectado, constancias, recibos, prestaciones. No das asesoría legal — cualquier cálculo es estimación. Si te piden algo fuera de tu alcance, sugiere contactar a RH. Sé conciso.",
+    "02": "Eres el 'Auditor de Nómina' de FAVESCO. Detectas anomalías en la nómina ANTES del pago. NO recalculas la nómina — solo identificas red flags. Reglas activas: horas extra fuera de tope legal, IMSS SBC fuera de rango, deducciones recurrentes faltantes, bonos/aguinaldo omitidos, variaciones de neto sobre 15%, IDs/cuentas duplicadas. Esta quincena detectaste 3 hallazgos: P1 horas extra ($18,400 MXN J. Ramírez y A. López), P2 bono antigüedad ($25,000 MXN C. Méndez), P3 variación SBC ($3,800 MXN N. García). Total $47,200 MXN. Responde en español mexicano técnico pero claro. Nunca recomiendas decisiones legales sin RH.",
+    "04": "Eres el 'Guardián de Cumplimiento' de FAVESCO. Vigilas obligaciones legales: NOM-035, IMSS, STPS, exámenes médicos, contratos, capacitación. Conoces la legislación mexicana laboral. Próximos 60 días tienes 23 vencimientos, el más crítico es NOM-035 Planta Tepeji que vence en 14 días (multa STPS estimada $400,000 MXN). Habla en español mexicano formal-técnico. Da fechas y montos específicos. No presentas trámites tú mismo — solo alertas y recomiendas."
+  };
+  try {
+    const r = await fetch("https://api.anthropic.com/v1/messages", {
+      method: "POST",
+      headers: {
+        "content-type": "application/json",
+        "x-api-key": key,
+        "anthropic-version": "2023-06-01",
+        "anthropic-dangerous-direct-browser-access": "true"
+      },
+      body: JSON.stringify({
+        model: "claude-haiku-4-5",
+        max_tokens: 600,
+        system: systemPrompts[currentAgent.n] || systemPrompts["07"],
+        messages: [{ role: "user", content: text }]
+      })
+    });
+    if (!r.ok) {
+      const err = await r.text();
+      return "⚠️ Error de API (" + r.status + "). Revisa tu API key. Detalle: " + err.slice(0, 200);
+    }
+    const data = await r.json();
+    return data.content?.[0]?.text || "(respuesta vacía)";
+  } catch (e) {
+    return "⚠️ No pude conectar con la API de Claude: " + e.message;
+  }
+}
+
+async function send(text) {
+  if (!text.trim()) return;
+  addMsg(text, "user");
+  chatInput.value = "";
+  chatSend.disabled = true;
+  const typing = addTyping();
+  const useLive = document.getElementById("api-key").value.trim().length > 0;
+  let reply;
+  if (useLive) {
+    reply = await respondLive(text);
+  } else {
+    await new Promise(r => setTimeout(r, 600 + Math.random() * 600));
+    reply = pickCanned(currentAgent.n, text);
+  }
+  typing.remove();
+  addMsg(reply, "agent");
+  chatSend.disabled = false;
+  chatInput.focus();
+}
+
+function resetChat() {
+  chatBody.innerHTML = "";
+  document.getElementById("chat-badge").innerText = currentAgent.n;
+  document.getElementById("chat-name").innerText = currentAgent.name;
+  const greetings = {
+    "07": "Buenos días, Renato. Soy el Director Virtual. Tu briefing de hoy ya está en la parte superior del panel. ¿Quieres que profundice en alguna de las 3 prioridades?",
+    "01": "¡Hola! Soy el Asistente del Empleado. Puedo ayudarte con vacaciones, aguinaldo, constancias, recibos y finiquito proyectado. ¿En qué te ayudo?",
+    "02": "Hola. Soy el Auditor de Nómina. Esta quincena identifiqué 3 anomalías antes del pago. ¿Quieres ver los hallazgos?",
+    "04": "Hola. Soy el Guardián de Cumplimiento. Tengo 23 vencimientos en los próximos 60 días, el más urgente es NOM-035 Tepeji (14 días). ¿Por dónde empezamos?"
+  };
+  addMsg(greetings[currentAgent.n] || greetings["07"], "agent");
+  renderSuggestions();
+}
+
+function renderSuggestions() {
+  suggestionsEl.innerHTML = "";
+  (SUGGESTIONS[currentAgent.n] || []).forEach(s => {
+    const c = document.createElement("div");
+    c.className = "chip";
+    c.textContent = s;
+    c.onclick = () => send(s);
+    suggestionsEl.appendChild(c);
+  });
+}
+
+chatSend.onclick = () => send(chatInput.value);
+chatInput.addEventListener("keydown", e => { if (e.key === "Enter") send(chatInput.value); });
+
+resetChat();
+</script>
+</body>
+</html>
